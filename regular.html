@@ -903,7 +903,7 @@ table tr:hover {
       <div>Portal Method Structural Analysis</div>
     </div>
     <div class="nav-links">
-      <button class="btn btn-secondary" onclick="location.href='irregular.php'">
+      <button class="btn btn-secondary" onclick="location.href='irregular.html'">
         <i class="fas fa-random"></i> Irregular Frame
       </button>
       <button class="btn btn-secondary" onclick="openAboutModal()">
@@ -2856,4 +2856,5 @@ if (!CanvasRenderingContext2D.prototype.roundRect) {
 </script>
 
 </body>
+
 </html>
