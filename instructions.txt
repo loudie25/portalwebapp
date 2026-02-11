@@ -1,0 +1,147 @@
+ENHANCED PORTAL METHOD STRUCTURAL ANALYSIS - INSTALLATION GUIDE
+================================================================
+
+OVERVIEW
+--------
+This enhanced version includes professional features like project management, 
+input validation, code compliance checking, and improved user experience.
+
+NEW FEATURES IMPLEMENTED
+-----------------------
+1. Project Management System
+   - Save/Load analysis projects
+   - Project naming and organization
+   - Auto-save functionality
+
+2. Enhanced Input Validation
+   - Real-time input validation
+   - Visual feedback for errors
+   - Range checking and constraints
+
+3. Code Compliance Checking
+   - ASCE 7-10 compliance checks
+   - Story drift limits
+   - Overturning stability
+   - Shear distribution verification
+
+4. Improved User Interface
+   - Professional styling
+   - Better mobile responsiveness
+   - Enhanced navigation
+   - Tutorial system
+
+5. Advanced Analysis Features
+   - Multiple load cases (Wind, Seismic)
+   - Automatic load pattern generation
+   - Enhanced visualization
+
+6. Professional Reporting
+   - Improved PDF export
+   - Comprehensive reports
+   - Code compliance summary
+
+INSTALLATION STEPS
+------------------
+1. Create a folder in your WAMP www directory:
+   C:\wamp64\www\portal-method-enhanced\
+
+2. Save all provided files in this directory:
+   - index.php (Enhanced landing page)
+   - regular.php (Enhanced regular frame solver) 
+   - irregular.php (Enhanced irregular frame page)
+   - theory.php (Educational content)
+   - manifest.json (PWA configuration)
+
+3. Start WAMP server and ensure:
+   - Apache is running (green icon)
+   - PHP is enabled
+   - MySQL is running (for future database features)
+
+4. Access the application:
+   http://localhost/portal-method-enhanced/
+
+5. For PWA features (optional):
+   - Add web app icons (icon-192.png, icon-512.png)
+   - Enable HTTPS for full PWA functionality
+
+FILE STRUCTURE
+--------------
+portal-method-enhanced/
+├── index.php          # Enhanced landing page with project management
+├── regular.php        # Enhanced regular frame solver
+├── irregular.php      # Enhanced irregular frame placeholder
+├── theory.php         # Educational content and references
+├── manifest.json      # PWA configuration
+└── enhancements-instructions.txt
+
+USAGE INSTRUCTIONS
+------------------
+1. First Time Use:
+   - The tutorial will automatically start
+   - Follow the guided steps to learn the tool
+   - Create your first project
+
+2. Creating Analysis:
+   - Select "Regular Frame Solver"
+   - Enter frame geometry (1-5 storeys, 1-5 spans)
+   - Input storey heights and loads
+   - Choose load case type
+   - Click "Solve" for analysis
+
+3. Project Management:
+   - Name your project in the header
+   - Use "Save Project" to store analysis
+   - Load previous projects from home page
+   - Export professional reports
+
+4. Code Compliance:
+   - Review automatic compliance checks
+   - Address any warnings or errors
+   - Select appropriate design code
+
+5. Exporting Results:
+   - Use "Professional Report" for PDF
+   - "Export Excel" for spreadsheet data
+   - All exports include compliance summary
+
+TECHNICAL FEATURES
+------------------
+- Frontend: HTML5, CSS3, JavaScript (ES6+)
+- Backend: PHP with session management
+- Validation: Real-time client-side validation
+- Visualization: Canvas-based diagrams
+- Responsive: Mobile-optimized interface
+- PWA: Progressive Web App capabilities
+
+FUTURE ENHANCEMENTS PLANNED
+---------------------------
+1. Database integration for project storage
+2. 3D visualization using Three.js
+3. Advanced irregular frame analysis
+4. Dynamic analysis capabilities
+5. Collaborative features
+6. Additional design code support
+
+TROUBLESHOOTING
+---------------
+1. If pages don't load:
+   - Check WAMP server status
+   - Verify file locations
+   - Check browser console for errors
+
+2. If validation doesn't work:
+   - Ensure JavaScript is enabled
+   - Check browser compatibility
+
+3. If sessions don't persist:
+   - Check PHP session configuration
+   - Verify write permissions
+
+SUPPORT
+-------
+This is an educational tool developed for structural engineering education.
+For technical support, consult the development team or refer to the code comments.
+
+VERSION: 4.1 (Enhanced)
+DATE: 2025
+DEVELOPED BY: BSCE 4 - Portal Method Project

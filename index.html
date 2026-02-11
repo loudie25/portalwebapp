@@ -1,0 +1,767 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Portal Method — Structural Analysis Web App</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#1f6fb2">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<style>
+:root {
+    --primary: #1f6fb2;
+    --primary-dark: #0f4c81;
+    --primary-light: #e8f4ff;
+    --secondary: #6c8aa6;
+    --accent: #28a745;
+    --background: #f8fcff;
+    --surface: #ffffff;
+    --text-primary: #1a365d;
+    --text-secondary: #4a5568;
+    --border: #e2e8f0;
+    --shadow: rgba(16, 84, 130, 0.1);
+    --shadow-hover: rgba(16, 84, 130, 0.2);
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+    background: var(--background);
+    color: var(--text-primary);
+    line-height: 1.6;
+    min-height: 100vh;
+    padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* Enhanced Animated Loading Screen */
+.loading-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #1a2980 0%, #26d0ce 100%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    overflow: hidden;
+}
+
+.loading-container {
+    position: relative;
+    width: 200px;
+    height: 200px;
+}
+
+.loading-frame {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+}
+
+.frame-part {
+    position: absolute;
+    background: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+}
+
+.frame-horizontal-top {
+    top: 20%;
+    left: 20%;
+    width: 60%;
+    height: 8px;
+    animation: slideInHorizontal 1.5s ease-out forwards;
+}
+
+.frame-horizontal-bottom {
+    bottom: 20%;
+    left: 20%;
+    width: 60%;
+    height: 8px;
+    animation: slideInHorizontal 1.5s ease-out 0.3s forwards;
+    opacity: 0;
+}
+
+.frame-vertical-left {
+    top: 20%;
+    left: 20%;
+    width: 8px;
+    height: 60%;
+    animation: slideInVertical 1.5s ease-out 0.6s forwards;
+    opacity: 0;
+}
+
+.frame-vertical-right {
+    top: 20%;
+    right: 20%;
+    width: 8px;
+    height: 60%;
+    animation: slideInVertical 1.5s ease-out 0.9s forwards;
+    opacity: 0;
+}
+
+.frame-column {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 6px;
+    height: 0;
+    background: #fff;
+    transform: translate(-50%, -50%);
+    animation: growColumn 1.2s ease-out 1.2s forwards;
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
+}
+
+@keyframes slideInHorizontal {
+    0% {
+        transform: translateX(-100%);
+        opacity: 0;
+    }
+    100% {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideInVertical {
+    0% {
+        transform: translateY(-100%);
+        opacity: 0;
+    }
+    100% {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+@keyframes growColumn {
+    0% {
+        height: 0;
+        opacity: 0;
+    }
+    100% {
+        height: 70%;
+        opacity: 1;
+    }
+}
+
+.loading-dots {
+    display: flex;
+    gap: 12px;
+    margin-top: 30px;
+}
+
+.loading-dot {
+    width: 12px;
+    height: 12px;
+    background: white;
+    border-radius: 50%;
+    animation: pulse 1.5s ease-in-out infinite;
+}
+
+.loading-dot:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.loading-dot:nth-child(3) {
+    animation-delay: 0.4s;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+        opacity: 0.5;
+    }
+    50% {
+        transform: scale(1.2);
+        opacity: 1;
+    }
+}
+
+.loading-text {
+    margin-top: 40px;
+    text-align: center;
+}
+
+.loading-title {
+    color: white;
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin-bottom: 10px;
+    animation: fadeInUp 1s ease-out;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+.loading-subtitle {
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 1rem;
+    font-weight: 400;
+    animation: fadeInUp 1s ease-out 0.3s forwards;
+    opacity: 0;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.structural-text {
+    background: linear-gradient(90deg, #ff7e5f, #feb47b, #86a8e7, #91eae4);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: gradientFlow 3s ease-in-out infinite;
+    background-size: 300% 300%;
+}
+
+@keyframes gradientFlow {
+    0%, 100% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+}
+
+/* Header */
+.app-header {
+    background: var(--surface);
+    padding: 1rem 1.5rem;
+    box-shadow: 0 2px 10px var(--shadow);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.header-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.app-logo {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    text-decoration: none;
+}
+
+.logo-icon {
+    width: 40px;
+    height: 40px;
+    background: var(--primary);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: bold;
+    font-size: 1.25rem;
+}
+
+.app-name {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    line-height: 1.2;
+}
+
+.app-tagline {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+/* Main Content */
+.main-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem;
+    animation: contentFadeIn 0.8s ease-out;
+}
+
+@keyframes contentFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.welcome-section {
+    text-align: center;
+    margin-bottom: 3rem;
+    padding: 0 1rem;
+}
+
+.welcome-title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 1rem;
+    line-height: 1.2;
+}
+
+.welcome-description {
+    font-size: 1.125rem;
+    color: var(--text-secondary);
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+/* Solver Cards Grid */
+.solvers-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin: 2rem 0;
+}
+
+.solver-card {
+    background: var(--surface);
+    border-radius: 16px;
+    padding: 2.5rem 2rem;
+    box-shadow: 0 4px 20px var(--shadow);
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+    position: relative;
+    overflow: hidden;
+}
+
+.solver-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 40px var(--shadow-hover);
+}
+
+.solver-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--primary), var(--accent));
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.3s ease;
+}
+
+.solver-card:hover::before {
+    transform: scaleX(1);
+}
+
+.solver-icon {
+    width: 70px;
+    height: 70px;
+    background: var(--primary-light);
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 2rem;
+    transition: all 0.3s ease;
+}
+
+.solver-card:hover .solver-icon {
+    transform: scale(1.1) rotate(5deg);
+    background: linear-gradient(135deg, var(--primary-light), #d4e6ff);
+}
+
+.solver-icon svg {
+    width: 36px;
+    height: 36px;
+    color: var(--primary);
+    transition: all 0.3s ease;
+}
+
+.solver-card:hover .solver-icon svg {
+    transform: scale(1.1);
+}
+
+.solver-card h3 {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+
+.solver-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    width: 100%;
+    padding: 1.2rem;
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    color: white;
+    text-decoration: none;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 1.1rem;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 2rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.solver-button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s ease;
+}
+
+.solver-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(31, 111, 178, 0.3);
+}
+
+.solver-button:hover::before {
+    left: 100%;
+}
+
+.solver-button.secondary {
+    background: linear-gradient(135deg, var(--secondary), #5a7794);
+}
+
+.solver-button.secondary:hover {
+    background: linear-gradient(135deg, #5a7794, #4a6678);
+}
+
+/* Footer */
+.app-footer {
+    text-align: center;
+    padding: 2rem 1.5rem;
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+    margin-top: 4rem;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+    .app-header {
+        padding: 0.75rem 1rem;
+    }
+    
+    .header-content {
+        flex-direction: column;
+        gap: 0.5rem;
+        text-align: center;
+    }
+    
+    .main-content {
+        padding: 1.5rem 1rem;
+    }
+    
+    .welcome-title {
+        font-size: 1.75rem;
+    }
+    
+    .welcome-description {
+        font-size: 1rem;
+    }
+    
+    .solvers-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+    
+    .solver-card {
+        padding: 2rem 1.5rem;
+    }
+    
+    .solver-icon {
+        width: 60px;
+        height: 60px;
+        margin-bottom: 1.5rem;
+    }
+    
+    .solver-card h3 {
+        font-size: 1.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .loading-title {
+        font-size: 1.5rem;
+    }
+    
+    .loading-subtitle {
+        font-size: 0.9rem;
+    }
+    
+    .solver-button {
+        padding: 1rem;
+        font-size: 1rem;
+    }
+}
+
+/* Touch Optimizations */
+@media (hover: none) and (pointer: coarse) {
+    .solver-card:hover {
+        transform: none;
+    }
+    
+    .solver-button:hover {
+        transform: none;
+    }
+    
+    .solver-card:active {
+        transform: scale(0.98);
+    }
+    
+    .solver-button:active {
+        transform: scale(0.95);
+    }
+}
+
+/* Safe Area Support */
+@supports (padding: max(0px)) {
+    .main-content, .app-header, .app-footer {
+        padding-left: max(1.5rem, env(safe-area-inset-left));
+        padding-right: max(1.5rem, env(safe-area-inset-right));
+    }
+    
+    body {
+        padding-top: env(safe-area-inset-top);
+    }
+}
+</style>
+</head>
+<body>
+  <!-- Animated Loading Screen -->
+  <div id="loading-screen" class="loading-screen">
+    <div class="loading-container">
+      <div class="loading-frame">
+        <div class="frame-part frame-horizontal-top"></div>
+        <div class="frame-part frame-horizontal-bottom"></div>
+        <div class="frame-part frame-vertical-left"></div>
+        <div class="frame-part frame-vertical-right"></div>
+        <div class="frame-column"></div>
+      </div>
+    </div>
+    
+    <div class="loading-dots">
+      <div class="loading-dot"></div>
+      <div class="loading-dot"></div>
+      <div class="loading-dot"></div>
+    </div>
+    
+    <div class="loading-text">
+      <h1 class="loading-title">Portal Method Analyzer</h1>
+      <p class="loading-subtitle">
+        <span class="structural-text">Structural Analysis</span> Web Application
+        </br>
+        <i>Ando | Mangco | Diezmo | Romero </i>
+      </p>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div id="main-content" style="display: none;">
+    <!-- Header -->
+    <header class="app-header">
+      <div class="header-content">
+        <a href="#" class="app-logo">
+          <div class="logo-icon">P</div>
+          <div>
+            <div class="app-name">Portal Method</div>
+            <div class="app-tagline">Structural Analysis Web App</div>
+          </div>
+        </a>
+      </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+      <section class="welcome-section">
+        <h1 class="welcome-title">Professional Structural Analysis</h1>
+        <p class="welcome-description">
+          Advanced portal method analysis for both regular and irregular frames. 
+          Designed for engineers with real-time calculations and professional reporting.
+        </p>
+      </section>
+
+      <!-- Solver Cards -->
+      <div class="solvers-grid">
+        <!-- Regular Frame Solver -->
+        <div class="solver-card">
+          <div class="solver-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+              <line x1="12" y1="3" x2="12" y2="21"/>
+            </svg>
+          </div>
+          <h3>Regular Frame Solver</h3>
+          <a href="regular.html" class="solver-button">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M9 18l6-6-6-6"/>
+            </svg>
+            Open Regular Solver
+          </a>
+        </div>
+
+        <!-- Irregular Frame Solver -->
+        <div class="solver-card">
+          <div class="solver-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polygon points="12 2 22 8 22 16 12 22 2 16 2 8 12 2"/>
+              <line x1="12" y1="2" x2="12" y2="22"/>
+            </svg>
+          </div>
+          <h3>Irregular Frame Solver</h3>
+          <a href="irregular.html" class="solver-button secondary">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M9 18l6-6-6-6"/>
+            </svg>
+            Open Irregular Solver
+          </a>
+        </div>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+      <p>© 2025 Portal Method Structural Analysis Web App</p>
+      <p style="margin-top: 0.5rem; font-size: 0.75rem; opacity: 0.7;">
+        Professional Tool for Structural Engineers | BSCE 4
+      </p>
+    </footer>
+  </div>
+
+<script>
+// Enhanced Loading Animation with Structural Analysis Theme
+document.addEventListener('DOMContentLoaded', () => {
+    const loadingScreen = document.getElementById('loading-screen');
+    const mainContent = document.getElementById('main-content');
+    
+    // Animate the structural frame parts
+    const frameParts = document.querySelectorAll('.frame-part');
+    const frameColumn = document.querySelector('.frame-column');
+    const loadingDots = document.querySelectorAll('.loading-dot');
+    
+    // Start all animations
+    frameParts.forEach((part, index) => {
+        part.style.animationPlayState = 'running';
+    });
+    
+    frameColumn.style.animationPlayState = 'running';
+    
+    // Enhanced progress simulation
+    let progress = 0;
+    const progressInterval = setInterval(() => {
+        progress += Math.random() * 8 + 4; // Random progress between 4-12%
+        
+        if (progress >= 100) {
+            clearInterval(progressInterval);
+            
+            // Complete loading sequence
+            setTimeout(() => {
+                // Add final animation before hiding
+                loadingScreen.style.opacity = '0';
+                loadingScreen.style.transform = 'scale(0.95)';
+                loadingScreen.style.transition = 'all 0.5s cubic-bezier(0.4, 0, 0.2, 1)';
+                
+                setTimeout(() => {
+                    loadingScreen.style.display = 'none';
+                    mainContent.style.display = 'block';
+                    
+                    // Add entrance animation for main content
+                    mainContent.style.opacity = '0';
+                    mainContent.style.transform = 'translateY(30px)';
+                    mainContent.style.transition = 'all 0.8s cubic-bezier(0.4, 0, 0.2, 1)';
+                    
+                    setTimeout(() => {
+                        mainContent.style.opacity = '1';
+                        mainContent.style.transform = 'translateY(0)';
+                        
+                        // Add subtle animation to solver cards
+                        const solverCards = document.querySelectorAll('.solver-card');
+                        solverCards.forEach((card, index) => {
+                            card.style.opacity = '0';
+                            card.style.transform = 'translateY(20px)';
+                            
+                            setTimeout(() => {
+                                card.style.transition = 'all 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
+                                card.style.opacity = '1';
+                                card.style.transform = 'translateY(0)';
+                            }, 300 + (index * 200));
+                        });
+                    }, 50);
+                }, 500);
+            }, 500);
+        }
+    }, 200);
+});
+
+// PWA Installation Support
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function() {
+        navigator.serviceWorker.register('/sw.js').catch(function(error) {
+            console.log('Service Worker registration failed:', error);
+        });
+    });
+}
+
+// Add to Homescreen Prompt
+let deferredPrompt;
+window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+});
+
+// Touch Feedback and Mobile Optimizations
+document.addEventListener('touchstart', function() {}, {passive: true});
+
+// Prevent double-tap zoom on mobile
+let lastTouchEnd = 0;
+document.addEventListener('touchend', function(event) {
+    const now = (new Date()).getTime();
+    if (now - lastTouchEnd <= 300) {
+        event.preventDefault();
+    }
+    lastTouchEnd = now;
+}, false);
+
+// Add smooth hover effect on mobile tap
+document.querySelectorAll('.solver-card').forEach(card => {
+    card.addEventListener('touchstart', function() {
+        this.style.transform = 'translateY(-4px)';
+    });
+    
+    card.addEventListener('touchend', function() {
+        setTimeout(() => {
+            this.style.transform = 'translateY(0)';
+        }, 150);
+    });
+});
+</script>
+</body>
+</html>
