@@ -30,6 +30,8 @@ $newProjectName = isset($_GET['newProject']) ? $_GET['newProject'] : '';
 <!-- Add MathJax for LaTeX rendering -->
 <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
 <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <!-- Font Awesome Icons -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
@@ -500,6 +502,7 @@ table tr:hover {
     cursor: crosshair;
     max-width: 100%;
     height: auto;
+    border: 1px solid var(--gray-light);
 }
 
 .viz-controls {
@@ -891,6 +894,44 @@ table tr:hover {
 .export-btn.text:hover {
     background: #218838;
 }
+
+/* Legend Styles */
+.legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    justify-content: center;
+    margin-top: 15px;
+    padding: 10px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border: 1px solid #dee2e6;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    padding: 4px 12px;
+    border-radius: 20px;
+    background: white;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.legend-color {
+    width: 16px;
+    height: 16px;
+    border-radius: 4px;
+}
+
+.legend-color.purple { background: #6f42c1; }
+.legend-color.blue { background: #007bff; }
+.legend-color.yellow { background: #ffc107; }
+.legend-color.green { background: #28a745; }
+.legend-color.red { background: #dc3545; }
+.legend-color.gray { background: #6c757d; }
+.legend-color.orange { background: #fd7e14; }
 </style>
 </head>
 <body>
@@ -900,14 +941,19 @@ table tr:hover {
       <div class="brand-icon">
         <i class="fas fa-building"></i>
       </div>
-      <div>Portal Method Structural Analysis</div>
+      <div>
+        <a href="index.php" style="text-decoration: none; color:white;">Portal Method Structural Analysis</a>
+      </div>
     </div>
     <div class="nav-links">
-      <button class="btn btn-secondary" onclick="location.href='irregular.html'">
+      <button class="btn btn-secondary" onclick="location.href='irregular.php'">
         <i class="fas fa-random"></i> Irregular Frame
-      </button>
+     
       <button class="btn btn-secondary" onclick="openAboutModal()">
         <i class="fas fa-info-circle"></i> About
+      </button>
+        <button class="btn btn-secondary" onclick="location.href='theory.php'">
+        <i class="fas fa-bars"></i> Theory
       </button>
       <button class="btn btn-secondary" onclick="window.print()">
         <i class="fas fa-print"></i> Print
@@ -928,7 +974,7 @@ table tr:hover {
         <i class="fas fa-bolt"></i> Shear Forces (V)
       </button>
       <button class="tab" onclick="switchTab('axial')">
-        <i class="fas fa-weight-hanging"></i> Axial Forces (F)
+        <i class="fas fa-weight-hanging"></i> Axial Forces (f)
       </button>
       <button class="tab" onclick="switchTab('moment')">
         <i class="fas fa-sync-alt"></i> Moments (M)
@@ -1021,9 +1067,13 @@ table tr:hover {
                    
                 
         <div class="btn-group">
-          <button class="btn btn-primary" onclick="exportToPDF()">
+           <!--<button class="btn btn-primary" onclick="exportToPDF()">
             <i class="fas fa-file-pdf"></i> Export PDF Report
           </button>
+           </button>-->
+        <button class="btn btn-primary" style="background: #6f42c1;" onclick="generateProfessionalReport()">
+            <i class="fas fa-file-pdf"></i> Professional Report
+        </button>
           <button class="btn btn-secondary" onclick="exportToCSV()">
             <i class="fas fa-file-csv"></i> Export CSV Data
           </button>
@@ -1106,20 +1156,20 @@ table tr:hover {
       <div class="card">
         <div class="card-header">
           <i class="fas fa-weight-hanging"></i>
-          <h2>Axial Forces Analysis</h2>
+          <h2>Axial Forces Analysis (f)</h2>
         </div>
         
         <div class="alert alert-info">
           <i class="fas fa-info-circle"></i>
           <div>
-            <strong>Note:</strong> Axial forces are automatically calculated when you solve the frame in the Portal Method tab.
+            <strong>Note:</strong> Axial forces (f) are automatically calculated when you solve the frame in the Portal Method tab.
             Click "Solve Frame Analysis" first to see results here.
           </div>
         </div>
 
         <div id="axialResults" class="hidden">
           <div class="result-card">
-            <h4><i class="fas fa-weight-hanging"></i> Axial Forces (F) Results</h4>
+            <h4><i class="fas fa-weight-hanging"></i> Axial Forces (f) Results</h4>
             <div id="axialResultsContent"></div>
           </div>
 
@@ -1135,7 +1185,7 @@ table tr:hover {
                     <th>Member Type</th>
                     <th>Storey</th>
                     <th>Position</th>
-                    <th>Axial Force (kN)</th>
+                    <th>Axial Force f (kN)</th>
                     <th>Type</th>
                   </tr>
                 </thead>
@@ -1271,14 +1321,20 @@ table tr:hover {
               <h3>Visualization Controls</h3>
             </div>
             <div class="viz-controls">
-              <button class="viz-btn active" onclick="toggleVizLayer('shears')">
-                <i class="fas fa-arrows-alt-v"></i> Show Shear (V)
+              <button class="viz-btn active" onclick="toggleVizLayer('colShear')">
+                <i class="fas fa-arrows-alt-v"></i> Column Shear (V)
+              </button>
+              <button class="viz-btn active" onclick="toggleVizLayer('beamShear')">
+                <i class="fas fa-arrows-alt-h"></i> Beam Shear (V)
+              </button>
+              <button class="viz-btn active" onclick="toggleVizLayer('colAxial')">
+                <i class="fas fa-arrow-up"></i> Column Axial (f)
+              </button>
+              <button class="viz-btn active" onclick="toggleVizLayer('beamAxial')">
+                <i class="fas fa-arrow-right"></i> Beam Axial (f)
               </button>
               <button class="viz-btn active" onclick="toggleVizLayer('moments')">
                 <i class="fas fa-redo-alt"></i> Show Moments (M)
-              </button>
-              <button class="viz-btn active" onclick="toggleVizLayer('axials')">
-                <i class="fas fa-arrows-alt-h"></i> Show Axial (P/H)
               </button>
               <button class="viz-btn" onclick="toggleVizLayer('loads')">
                 <i class="fas fa-weight-hanging"></i> Show Loads
@@ -1298,9 +1354,14 @@ table tr:hover {
               <canvas id="structureCanvas"></canvas>
             </div>
             
-            <div style="margin-top: 15px; font-size: 13px; color: var(--gray); text-align: center; line-height: 1.6;">
-              <div><i class="fas fa-circle" style="color: white; background: #333; border-radius: 50%; padding: 3px;"></i> White circles = Hinges (points of contraflexure)</div>
-              <div><span style="color: #007bff;">🟦 Blue</span> = Shear forces | <span style="color: #28a745;">🟩 Green</span> = Axial forces | <span style="color: #6f42c1;">🟪 Purple</span> = Column shears</div>
+            <div class="legend">
+              <div class="legend-item"><span class="legend-color purple"></span> Column Shear (V)</div>
+              <div class="legend-item"><span class="legend-color blue"></span> Beam Shear (V)</div>
+              <div class="legend-item"><span class="legend-color yellow"></span> Column Axial (f)</div>
+              <div class="legend-item"><span class="legend-color green"></span> Beam Axial (f)</div>
+              <div class="legend-item"><span class="legend-color orange"></span> Moments (M)</div>
+              <div class="legend-item"><span class="legend-color red"></span> Loads (P)</div>
+              <div class="legend-item"><span class="legend-color gray"></span> Hinge</div>
             </div>
           </div>
         </div>
@@ -1401,11 +1462,13 @@ let shearForces = {};
 let axialForces = {};
 let bendingMoments = {};
 
-// Visualization Settings
+// Visualization Settings - Updated for more granular control
 const vizSettings = {
-  shears: true,
+  colShear: true,
+  beamShear: true,
+  colAxial: true,
+  beamAxial: true,
   moments: true,
-  axials: true,
   loads: false
 };
 
@@ -1487,6 +1550,104 @@ function handleSpansChange() {
     updateSolveButton();
 }
 
+// ==========================================
+// PROFESSIONAL PDF REPORT GENERATOR - FIXED
+// ==========================================
+function generateProfessionalReport() {
+    if (Object.keys(analysisResults).length === 0) {
+        showNotification('Please solve the frame first!', 'warning');
+        return;
+    }
+    
+    // Get project details with validation
+    let projectName = prompt('Enter Project Name:', 'Portal Frame Analysis');
+    if (projectName === null) return; // User cancelled
+    if (projectName.trim() === '') projectName = 'Portal Frame Analysis';
+    
+    let engineerName = prompt('Enter Engineer Name:', 'Structural Engineer');
+    if (engineerName === null) return; // User cancelled
+    if (engineerName.trim() === '') engineerName = 'Structural Engineer';
+    
+    let projectLocation = prompt('Enter Project Location (optional):', '');
+    if (projectLocation === null) projectLocation = '';
+    
+    showNotification('Generating professional PDF report...', 'info');
+    
+    try {
+        // Capture canvas as image
+        const canvas = document.getElementById('structureCanvas');
+        
+        // Make sure visualization is rendered
+        if (typeof initVisualization === 'function') {
+            initVisualization();
+        }
+        
+        // Small delay to ensure canvas renders
+        setTimeout(function() {
+            try {
+                // Get canvas image with maximum quality
+                const canvasImage = canvas.toDataURL('image/png', 1.0);
+                
+                // Prepare data for PDF - IMPORTANT: Make sure all data exists
+                const reportData = {
+                    nStories: analysisResults.nStories || 0,
+                    nSpans: analysisResults.nSpans || 0,
+                    heights: analysisResults.heights || [],
+                    loads: analysisResults.loads || [],
+                    spans: analysisResults.spans || [],
+                    storyShear: analysisResults.V || [],
+                    columns: analysisResults.columns || [],
+                    beams: analysisResults.beams || []
+                };
+                
+                // Create a form to submit the data
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = 'generate_report.php';
+                form.target = '_blank'; // Open in new tab
+                
+                // Add all data as hidden inputs
+                const fields = {
+                    'analysis_data': JSON.stringify(reportData),
+                    'canvas_image': canvasImage,
+                    'project_name': projectName,
+                    'engineer_name': engineerName,
+                    'project_location': projectLocation
+                };
+                
+                for (const [name, value] of Object.entries(fields)) {
+                    const input = document.createElement('input');
+                    input.type = 'hidden';
+                    input.name = name;
+                    input.value = value;
+                    form.appendChild(input);
+                }
+                
+                // Append form to body, submit, then remove
+                document.body.appendChild(form);
+                form.submit();
+                
+                // Show success message
+                showNotification('PDF report should open in a new tab. If not, check browser popup blocker.', 'success');
+                
+                // Remove form after submission
+                setTimeout(() => {
+                    document.body.removeChild(form);
+                }, 1000);
+                
+            } catch (e) {
+                console.error('Canvas capture error:', e);
+                showNotification('Error capturing diagram: ' + e.message, 'error');
+            }
+        }, 500);
+        
+    } catch (error) {
+        console.error('PDF generation error:', error);
+        showNotification('Error generating PDF report: ' + error.message, 'error');
+    }
+}
+
+
 function generateStoreyInputs(n) {
     let html = '<div class="grid grid-2">';
     for (let i = 0; i < n; i++) {
@@ -1497,9 +1658,9 @@ function generateStoreyInputs(n) {
                        step="0.1" placeholder="2.0 - 10.0" oninput="updateSolveButton()">
             </div>
             <div class="form-group">
-                <label class="form-label">Storey ${i+1} - Load (kN)</label>
-                <input type="number" id="P${i}" class="form-input" min="0" max="1000" 
-                       step="0.1" placeholder="0 - 1000" oninput="updateSolveButton()">
+                <label class="form-label">Storey ${i+1} - Load (kN) (0-3000)</label>
+                <input type="number" id="P${i}" class="form-input" min="0" max="3000" 
+                       step="0.1" placeholder="0 - 3000" oninput="updateSolveButton()">
             </div>
         `;
     }
@@ -1538,7 +1699,7 @@ function updateSolveButton() {
     for (let i = 0; i < nStories; i++) {
         const h = parseFloat($(`h${i}`)?.value);
         const P = parseFloat($(`P${i}`)?.value);
-        if (isNaN(h) || isNaN(P) || h < 2 || h > 10 || P < 0 || P > 1000) {
+        if (isNaN(h) || isNaN(P) || h < 2 || h > 10 || P < 0 || P > 3000) {
             allValid = false;
             break;
         }
@@ -1744,6 +1905,28 @@ function displayResults() {
     
     html += '</tbody></table></div>';
     
+    // Add span lengths display
+    html += '<div style="margin-top: 20px; padding: 15px; background: #e3f2fd; border-radius: 8px;">';
+    html += '<h4 style="color: var(--primary-dark); margin-bottom: 10px;"><i class="fas fa-ruler-horizontal"></i> Span Lengths</h4>';
+    html += '<div style="display: flex; gap: 20px; flex-wrap: wrap;">';
+    for (let i = 0; i < analysisResults.nSpans; i++) {
+        html += `<div style="background: white; padding: 10px 15px; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                    <strong>Span ${i+1}:</strong> ${analysisResults.spans[i].toFixed(2)} m
+                </div>`;
+    }
+    html += '</div></div>';
+    
+    // Add storey heights display
+    html += '<div style="margin-top: 20px; padding: 15px; background: #fff3e0; border-radius: 8px;">';
+    html += '<h4 style="color: var(--primary-dark); margin-bottom: 10px;"><i class="fas fa-ruler-vertical"></i> Storey Heights</h4>';
+    html += '<div style="display: flex; gap: 20px; flex-wrap: wrap;">';
+    for (let i = 0; i < analysisResults.nStories; i++) {
+        html += `<div style="background: white; padding: 10px 15px; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                    <strong>Storey ${i+1}:</strong> ${analysisResults.heights[i].toFixed(2)} m
+                </div>`;
+    }
+    html += '</div></div>';
+    
     $('tableArea').innerHTML = html;
     $('outputs').classList.remove('hidden');
     $('noResults').classList.add('hidden');
@@ -1799,7 +1982,7 @@ function validateComprehensive() {
     }
     
     const totalLoad = data.loads.reduce((a, b) => a + b, 0);
-    if (totalLoad > 500) {
+    if (totalLoad > 1500) {
         warnings.push('High lateral load - verify foundation capacity');
     }
     
@@ -1838,8 +2021,8 @@ function exportToCSV() {
     csvContent += "\n";
     
     if (Object.keys(axialForces).length > 0) {
-        csvContent += "Axial Forces\n";
-        csvContent += "Member,Force (kN),Type\n";
+        csvContent += "Axial Forces (f)\n";
+        csvContent += "Member,Force f (kN),Type\n";
         for (const [key, data] of Object.entries(axialForces.columns)) {
             const type = data.type || (data.value < 0 ? "Compression" : "Tension");
             csvContent += `${key},${data.value.toFixed(1)},${type}\n`;
@@ -1929,7 +2112,7 @@ function displayShearResults() {
         html += `
             <div class="result-card" style="margin-bottom: 10px;">
                 <h5>${key}</h5>
-                <div style="font-size: 20px; font-weight: 700; color: var(--primary);">${data.value.toFixed(2)} kN</div>
+                <div style="font-size: 20px; font-weight: 700; color: #6f42c1;">${data.value.toFixed(2)} kN</div>
                 <div style="font-size: 12px; color: var(--gray); margin-top: 4px;">Storey ${data.story}, Column ${data.column}</div>
             </div>
         `;
@@ -1942,7 +2125,7 @@ function displayShearResults() {
         html += `
             <div class="result-card" style="margin-bottom: 10px;">
                 <h5>${key}</h5>
-                <div style="font-size: 20px; font-weight: 700; color: #f72585;">${data.value.toFixed(2)} kN</div>
+                <div style="font-size: 20px; font-weight: 700; color: #007bff;">${data.value.toFixed(2)} kN</div>
                 <div style="font-size: 12px; color: var(--gray); margin-top: 4px;">Storey ${data.story}, Span ${data.span}</div>
             </div>
         `;
@@ -2090,7 +2273,7 @@ function displayAxialResults() {
     let html = '<div class="grid grid-2">';
     
     html += '<div>';
-    html += '<h4><i class="fas fa-columns"></i> Column Axial Forces</h4>';
+    html += '<h4><i class="fas fa-columns"></i> Column Axial Forces (f)</h4>';
     for (const [key, data] of Object.entries(axialForces.columns)) {
         const typeClass = data.value < 0 ? 'compression' : 'tension';
         const forceType = data.type;
@@ -2098,7 +2281,7 @@ function displayAxialResults() {
         html += `
             <div class="result-card" style="margin-bottom: 10px;">
                 <h5>${key}</h5>
-                <div style="font-size: 20px; font-weight: 700; color: ${data.value < 0 ? '#dc2626' : '#059669'};">${data.value.toFixed(2)} kN</div>
+                <div style="font-size: 20px; font-weight: 700; color: ${data.value < 0 ? '#dc2626' : '#ffc107'};">${data.value.toFixed(2)} kN</div>
                 <div style="font-size: 12px; color: var(--gray); margin-top: 4px;">
                     Storey ${data.story}, Column ${data.column} - <span class="${typeClass}">${forceType}</span>
                 </div>
@@ -2108,7 +2291,7 @@ function displayAxialResults() {
     html += '</div>';
     
     html += '<div>';
-    html += '<h4><i class="fas fa-grip-lines"></i> Beam Axial Forces</h4>';
+    html += '<h4><i class="fas fa-grip-lines"></i> Beam Axial Forces (f)</h4>';
     for (const [key, data] of Object.entries(axialForces.beams)) {
         const typeClass = data.value < 0 ? 'compression' : 'tension';
         const forceType = data.type;
@@ -2116,7 +2299,7 @@ function displayAxialResults() {
         html += `
             <div class="result-card" style="margin-bottom: 10px;">
                 <h5>${key}</h5>
-                <div style="font-size: 20px; font-weight: 700; color: ${data.value < 0 ? '#dc2626' : '#059669'};">${data.value.toFixed(2)} kN</div>
+                <div style="font-size: 20px; font-weight: 700; color: ${data.value < 0 ? '#dc2626' : '#28a745'};">${data.value.toFixed(2)} kN</div>
                 <div style="font-size: 12px; color: var(--gray); margin-top: 4px;">
                     Storey ${data.story}, Span ${data.span} - <span class="${typeClass}">${forceType}</span>
                 </div>
@@ -2186,14 +2369,14 @@ function generateAxialSteps() {
         <div class="calculation-step">
             <div>
                 <span class="step-number">${stepNum++}</span>
-                <span class="step-title">Step 1: Calculate Column Axial Forces (Vertical Equilibrium)</span>
+                <span class="step-title">Step 1: Calculate Column Axial Forces (f) - Vertical Equilibrium</span>
             </div>
             <div class="step-work">
                 <strong>Formula for Column j at Storey i:</strong><br>
-                F_col[i][j] = F_col[i+1][j] + V_beam_left - V_beam_right<br><br>
+                f_col[i][j] = f_col[i+1][j] + V_beam_left - V_beam_right<br><br>
                 
                 <strong>Where:</strong><br>
-                • F_col[i+1][j] = Axial force in column above (0 for top storey)<br>
+                • f_col[i+1][j] = Axial force in column above (0 for top storey)<br>
                 • V_beam_left = Shear in beam to the left of column (0 for left exterior)<br>
                 • V_beam_right = Shear in beam to the right of column (0 for right exterior)<br>
             </div>
@@ -2203,14 +2386,14 @@ function generateAxialSteps() {
         <div class="calculation-step">
             <div>
                 <span class="step-number">${stepNum++}</span>
-                <span class="step-title">Step 2: Calculate Beam Axial Forces (Horizontal Equilibrium)</span>
+                <span class="step-title">Step 2: Calculate Beam Axial Forces (f) - Horizontal Equilibrium</span>
             </div>
             <div class="step-work">
                 <strong>Formula for Beam j at Storey i:</strong><br>
-                F_beam[i][j] = F_prev + Load + Shear_Above - Shear_Below<br><br>
+                f_beam[i][j] = f_prev + Load + Shear_Above - Shear_Below<br><br>
                 
                 <strong>Where:</strong><br>
-                • F_prev = Axial force from previous joint (0 for leftmost)<br>
+                • f_prev = Axial force from previous joint (0 for leftmost)<br>
                 • Load = Lateral load at this joint (only at left exterior)<br>
                 • Shear_Above = Column shear from storey above<br>
                 • Shear_Below = Column shear at current storey<br>
@@ -2226,7 +2409,7 @@ function generateAxialSteps() {
             <div class="step-work">
                 <strong>Compression (C):</strong> Negative values (-) → Member is being pushed/shortened<br>
                 <strong>Tension (T):</strong> Positive values (+) → Member is being pulled/lengthened<br>
-                <strong>Negligible:</strong> Values near zero (|F| < 0.1 kN)<br>
+                <strong>Negligible:</strong> Values near zero (|f| < 0.1 kN)<br>
             </div>
             <div class="step-result">
                 ✓ Axial force analysis complete using Portal Method
@@ -2307,7 +2490,7 @@ function displayMomentResults() {
         html += `
             <div class="result-card" style="margin-bottom: 10px;">
                 <h5>${key}</h5>
-                <div style="font-size: 20px; font-weight: 700; color: ${data.momentTop < 0 ? '#dc2626' : '#1d4ed8'};">${Math.abs(data.momentTop).toFixed(2)} kN·m</div>
+                <div style="font-size: 20px; font-weight: 700; color: #fd7e14;">${Math.abs(data.momentTop).toFixed(2)} kN·m</div>
                 <div style="font-size: 12px; color: var(--gray); margin-top: 4px;">
                     Storey ${data.story}, Column ${data.column} - <span class="${momentClass}">${sign} ${data.type}</span>
                 </div>
@@ -2327,7 +2510,7 @@ function displayMomentResults() {
         html += `
             <div class="result-card" style="margin-bottom: 10px;">
                 <h5>${key}</h5>
-                <div style="font-size: 20px; font-weight: 700; color: #f59e0b;">${data.maxMoment.toFixed(2)} kN·m</div>
+                <div style="font-size: 20px; font-weight: 700; color: #fd7e14;">${data.maxMoment.toFixed(2)} kN·m</div>
                 <div style="font-size: 12px; color: var(--gray); margin-top: 4px;">
                     Storey ${data.story}, Span ${data.span}<br>
                     Left: <span class="${leftClass}">${Math.abs(data.momentLeft).toFixed(2)} kN·m ${leftSign}</span><br>
@@ -2351,8 +2534,8 @@ function displayMomentResults() {
                 <td>${key}</td>
                 <td>${data.story}</td>
                 <td>Column ${data.column}</td>
-                <td><span class="${momentClass}">${data.momentTop.toFixed(2)}</span></td>
-                <td><span class="${momentClass}">${data.momentBottom.toFixed(2)}</span></td>
+                <td><span class="${momentClass}" style="font-weight: bold;">${data.momentTop.toFixed(2)}</span></td>
+                <td><span class="${momentClass}" style="font-weight: bold;">${data.momentBottom.toFixed(2)}</span></td>
                 <td><span class="${momentClass}">${data.type}</span></td>
             </tr>
         `;
@@ -2436,7 +2619,7 @@ function generateMomentSteps() {
     $('momentStepsContent').innerHTML = stepsHTML;
 }
 
-// ================= VISUALIZATION FUNCTIONS =================
+// ================= UPDATED VISUALIZATION FUNCTIONS WITH FIXED POSITIONS =================
 function initVisualization() {
     if (Object.keys(analysisResults).length === 0) {
         $('visualizationResults').classList.add('hidden');
@@ -2450,20 +2633,20 @@ function initVisualization() {
     const canvas = document.getElementById('structureCanvas');
     const ctx = canvas.getContext('2d');
     
-    // Dynamically calculate canvas dimensions based on structure size
-    const padding = 80;
-    const storeyHeightPixels = 100;
-    const spanWidthPixels = 120;
+    // Larger canvas dimensions
+    const padding = 120; // Increased padding
+    const storeyHeightPixels = 150; // Taller storeys
+    const spanWidthPixels = 180; // Wider spans
     
-    // Calculate required width and height
+    // Calculate required width and height with extra space for labels
     const requiredWidth = (analysisResults.nSpans * spanWidthPixels) + (padding * 2);
     const requiredHeight = (analysisResults.nStories * storeyHeightPixels) + (padding * 2);
     
-    // Set canvas dimensions with some extra space
-    canvas.width = Math.max(800, requiredWidth);
-    canvas.height = Math.max(500, requiredHeight);
+    // Set larger canvas dimensions
+    canvas.width = Math.max(1000, requiredWidth);
+    canvas.height = Math.max(700, requiredHeight);
     
-    // Clear
+    // Clear canvas
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     
     // Calculate offsets for centering
@@ -2477,13 +2660,16 @@ function initVisualization() {
 function drawStructure(ctx, w, h, startX, pad, sH, sW) {
     // Helper: map grid to coords
     const getX = (colIdx) => startX + (colIdx * sW);
-    const getY = (storeyIdx) => h - pad - ((storeyIdx - 0) * sH); // Storey 0 is ground
+    const getY = (storeyIdx) => h - pad - ((storeyIdx) * sH); // Storey 0 is ground
     
     // Style config
     ctx.lineCap = 'round';
     ctx.lineJoin = 'round';
     
-    // === DRAW GEOMETRY ===
+    // Clear canvas first
+    ctx.clearRect(0, 0, w, h);
+    
+    // === DRAW GEOMETRY (Always visible) ===
     
     // Draw Columns with hinge indicators
     for (let i = 1; i <= analysisResults.nStories; i++) {
@@ -2500,7 +2686,7 @@ function drawStructure(ctx, w, h, startX, pad, sH, sW) {
             ctx.lineTo(x, yTop);
             ctx.stroke();
             
-            // Draw hinge indicator at mid-height (point of contraflexure)
+            // Draw hinge indicator at mid-height
             const midY = (yTop + yBot) / 2;
             ctx.beginPath();
             ctx.arc(x, midY, 6, 0, Math.PI * 2);
@@ -2510,7 +2696,7 @@ function drawStructure(ctx, w, h, startX, pad, sH, sW) {
             ctx.lineWidth = 2;
             ctx.stroke();
             
-            // Draw Support at base (Storey 0)
+            // Draw Support at base
             if (i === 1) {
                 drawSupport(ctx, x, yBot);
             }
@@ -2532,7 +2718,7 @@ function drawStructure(ctx, w, h, startX, pad, sH, sW) {
             ctx.lineTo(xRight, y);
             ctx.stroke();
             
-            // Draw hinge indicator at mid-span (point of contraflexure)
+            // Draw hinge indicator at mid-span
             const midX = (xLeft + xRight) / 2;
             ctx.beginPath();
             ctx.arc(midX, y, 6, 0, Math.PI * 2);
@@ -2544,140 +2730,477 @@ function drawStructure(ctx, w, h, startX, pad, sH, sW) {
         }
     }
     
-    // === DRAW LOADS (Layer) ===
+    // === DRAW LOADS - Properly aligned with each storey level ===
     if (vizSettings.loads) {
+        for (let i = 0; i < analysisResults.nStories; i++) {
+            const load = analysisResults.loads[i];
+            const storeyIndex = i + 1;
+            
+            // Calculate exact vertical center of each storey
+            const yTop = getY(storeyIndex);
+            const yBot = getY(storeyIndex - 1);
+            const yCenter = (yTop + yBot) / 2;
+            
+            // Position loads left of the frame with consistent spacing
+            const xStart = getX(0) - 180; // Arrow start point
+            const xEnd = getX(0) - 80;     // Arrow end point (connects to frame)
+            
+            ctx.save();
+            
+            // Draw arrow shaft (perfectly horizontal at storey center)
+            ctx.beginPath();
+            ctx.strokeStyle = '#dc3545';
+            ctx.lineWidth = 3;
+            ctx.moveTo(xStart, yCenter);
+            ctx.lineTo(xEnd, yCenter);
+            ctx.stroke();
+            
+            // Draw arrow head at the end
+            ctx.fillStyle = '#dc3545';
+            ctx.beginPath();
+            ctx.moveTo(xEnd, yCenter);
+            ctx.lineTo(xEnd - 12, yCenter - 8);
+            ctx.lineTo(xEnd - 12, yCenter + 8);
+            ctx.closePath();
+            ctx.fill();
+            
+            // Draw load value with background (positioned above arrow)
+            ctx.font = 'bold 14px sans-serif';
+            const text = `${load} kN`;
+            
+            // Background for text
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.95)';
+            ctx.shadowColor = 'rgba(0,0,0,0.1)';
+            ctx.shadowBlur = 4;
+            ctx.shadowOffsetY = 2;
+            ctx.beginPath();
+            ctx.roundRect(xStart - 10, yCenter - 25, 70, 24, 6);
+            ctx.fill();
+            
+            // Reset shadow for text
+            ctx.shadowColor = 'transparent';
+            
+            // Draw text
+            ctx.fillStyle = '#dc3545';
+            ctx.font = 'bold 14px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(text, xStart + 25, yCenter - 12);
+            
+            ctx.restore();
+        }
+    }
+    
+    // === FIX #4: DRAW STOREY HEIGHTS - All aligned at same x-position ===
+    ctx.shadowColor = 'rgba(0,0,0,0.1)';
+    ctx.shadowBlur = 4;
+    ctx.shadowOffsetY = 2;
+    
+    // Fixed x-position for all storey labels (no stagger)
+    const fixedXOffset = 155; // Was: 150 + (i % 3) * 20 (removed stagger)
+    
+    for (let i = 0; i < analysisResults.nStories; i++) {
+        const storeyIndex = i + 1;
+        const yTop = getY(storeyIndex);
+        const yBot = getY(storeyIndex - 1);
+        const yCenter = (yTop + yBot) / 2;
+        
+        // All labels at same x position
+        const x = getX(analysisResults.nSpans) + fixedXOffset;
+        
+        // Draw background
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.95)';
+        ctx.beginPath();
+        ctx.roundRect(x - 45, yCenter - 15, 100, 30, 8);
+        ctx.fill();
+        
+        // Draw text
+        ctx.fillStyle = '#0d47a1';
+        ctx.font = 'bold 14px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(`h${storeyIndex}=${analysisResults.heights[i].toFixed(1)}m`, x, yCenter);
+    }
+    
+    // === DRAW SPAN LENGTHS - Positioned below ground with staggered offsets ===
+    for (let span = 1; span <= analysisResults.nSpans; span++) {
+        const xMid = (getX(span-1) + getX(span)) / 2;
+        // Stagger vertical positions based on span to prevent overlap
+        const yBase = getY(0) + 60;
+        const yOffset = (span % 2) * 15; // Alternate heights
+        const y = yBase + yOffset;
+        
+        // Draw background
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.95)';
+        ctx.beginPath();
+        ctx.roundRect(xMid - 50, y - 15, 100, 30, 8);
+        ctx.fill();
+        
+        // Draw text
+        ctx.fillStyle = '#0d47a1';
+        ctx.font = 'bold 14px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(`L${span}=${analysisResults.spans[span-1].toFixed(1)}m`, xMid, y);
+    }
+    
+    ctx.shadowColor = 'transparent';
+    
+    // === FIX #1: DRAW COLUMN SHEAR FORCES (V) - Fixed offset, no column stagger ===
+    if (vizSettings.colShear) {
         for (let i = 1; i <= analysisResults.nStories; i++) {
-            const load = analysisResults.loads[i-1];
-            const x = getX(0);
-            const y = getY(i);
-            drawArrow(ctx, x - 50, y, x - 5, y, '#dc3545');
-            drawLabel(ctx, `${load} kN`, x - 55, y - 10, '#dc3545', 'right');
+            for (let col = 0; col <= analysisResults.nSpans; col++) {
+                if (analysisResults.columns[i-1] && analysisResults.columns[i-1][col]) {
+                    const x = getX(col);
+                    const yTop = getY(i);
+                    const yBot = getY(i-1);
+                    const yMid = (yTop + yBot) / 2;
+                    const val = analysisResults.columns[i-1][col].shear.toFixed(2);
+                    
+                    // FIXED: Use constant offset - no more col * 5 stagger
+                    const offsetX = -65; // Was: -50 - col*5
+                    
+                    // Draw background
+                    ctx.fillStyle = 'rgba(255, 255, 255, 0.95)';
+                    ctx.shadowColor = 'rgba(0,0,0,0.1)';
+                    ctx.shadowBlur = 4;
+                    ctx.shadowOffsetY = 2;
+                    ctx.beginPath();
+                    ctx.roundRect(x + offsetX - 20, yMid - 10, 60, 20, 6);
+                    ctx.fill();
+                    
+                    // Draw text
+                    ctx.fillStyle = '#6f42c1';
+                    ctx.font = 'bold 12px sans-serif';
+                    ctx.shadowColor = 'transparent';
+                    ctx.fillText(`V=${val}`, x + offsetX, yMid);
+                }
+            }
         }
     }
     
-    // === DRAW RESULTS ===
-    ctx.font = 'bold 12px sans-serif';
-    
-    // 1. BEAM RESULTS
-    for (let i = 1; i <= analysisResults.nStories; i++) {
-        for (let span = 1; span <= analysisResults.nSpans; span++) {
-            const xMid = (getX(span-1) + getX(span)) / 2;
-            const y = getY(i);
-            
-            // Vertical Shear (V) - Above Beam
-            if (vizSettings.shears && analysisResults.beams[i-1] && analysisResults.beams[i-1][span-1]) {
-                const val = analysisResults.beams[i-1][span-1].shear.toFixed(2);
-                drawResultBadge(ctx, `V=${val}`, xMid, y - 25, '#007bff', '#ffffff');
-            }
-            
-            // Horizontal Axial (H) - Below Beam
-            if (vizSettings.axials && analysisResults.beams[i-1] && analysisResults.beams[i-1][span-1]) {
-                const val = analysisResults.beams[i-1][span-1].axial.toFixed(2);
-                drawResultBadge(ctx, `H=${val}`, xMid, y + 25, '#28a745', '#ffffff');
+    // === FIX #1: DRAW COLUMN AXIAL FORCES (F) - Fixed offset, no column stagger ===
+    if (vizSettings.colAxial) {
+        for (let i = 1; i <= analysisResults.nStories; i++) {
+            for (let col = 0; col <= analysisResults.nSpans; col++) {
+                if (analysisResults.columns[i-1] && analysisResults.columns[i-1][col]) {
+                    const x = getX(col);
+                    const yTop = getY(i);
+                    const yBot = getY(i-1);
+                    const yMid = (yTop + yBot) / 2;
+                    const raw = analysisResults.columns[i-1][col].axial;
+                    const val = raw.toFixed(2);
+                    
+                    // FIXED: Use constant offset - no more col * 5 stagger
+                    const offsetX = 50; // Was: 40 + col*5
+                    
+                    // Draw background
+                    ctx.fillStyle = 'rgba(255, 255, 255, 0.95)';
+                    ctx.shadowColor = 'rgba(0,0,0,0.1)';
+                    ctx.shadowBlur = 4;
+                    ctx.shadowOffsetY = 2;
+                    ctx.beginPath();
+                    ctx.roundRect(x + offsetX - 20, yMid - 10, 60, 20, 6);
+                    ctx.fill();
+                    
+                    // Draw text with color based on tension/compression
+                    ctx.fillStyle = raw > 0 ? '#28a745' : '#dc3545';
+                    ctx.font = 'bold 12px sans-serif';
+                    ctx.shadowColor = 'transparent';
+                    ctx.fillText(`F=${val}`, x + offsetX, yMid);
+                }
             }
         }
     }
     
-    // 2. COLUMN RESULTS
+    // === FIX #2: DRAW BEAM SHEAR FORCES (V) - Fixed vertical offset, no storey stagger ===
+    if (vizSettings.beamShear) {
+        for (let i = 1; i <= analysisResults.nStories; i++) {
+            for (let span = 1; span <= analysisResults.nSpans; span++) {
+                if (analysisResults.beams[i-1] && analysisResults.beams[i-1][span-1]) {
+                    const xMid = (getX(span-1) + getX(span)) / 2;
+                    const y = getY(i);
+                    const val = analysisResults.beams[i-1][span-1].shear.toFixed(2);
+                    
+                    // FIXED: Constant offset above beam - no storey stagger
+                    const yOffset = -38; // Was: -35 - (i % 3) * 5
+                    
+                    // Draw background above beam
+                    ctx.fillStyle = 'rgba(255, 255, 255, 0.95)';
+                    ctx.shadowColor = 'rgba(0,0,0,0.1)';
+                    ctx.shadowBlur = 4;
+                    ctx.shadowOffsetY = 2;
+                    ctx.beginPath();
+                    ctx.roundRect(xMid - 30, y + yOffset - 8, 60, 20, 6);
+                    ctx.fill();
+                    
+                    // Draw text
+                    ctx.fillStyle = '#007bff';
+                    ctx.font = 'bold 12px sans-serif';
+                    ctx.shadowColor = 'transparent';
+                    ctx.fillText(`V=${val}`, xMid, y + yOffset);
+                }
+            }
+        }
+    }
+    
+    // === FIX #2: DRAW BEAM AXIAL FORCES (F) - Fixed vertical offset, no storey stagger ===
+    if (vizSettings.beamAxial) {
+        for (let i = 1; i <= analysisResults.nStories; i++) {
+            for (let span = 1; span <= analysisResults.nSpans; span++) {
+                if (analysisResults.beams[i-1] && analysisResults.beams[i-1][span-1]) {
+                    const xMid = (getX(span-1) + getX(span)) / 2;
+                    const y = getY(i);
+                    const raw = analysisResults.beams[i-1][span-1].axial;
+                    const val = raw.toFixed(2);
+                    
+                    // FIXED: Constant offset below beam - no storey stagger
+                    const yOffset = 28; // Was: 25 + (i % 3) * 5
+                    
+                    // Draw background below beam
+                    ctx.fillStyle = 'rgba(255, 255, 255, 0.95)';
+                    ctx.shadowColor = 'rgba(0,0,0,0.1)';
+                    ctx.shadowBlur = 4;
+                    ctx.shadowOffsetY = 2;
+                    ctx.beginPath();
+                    ctx.roundRect(xMid - 30, y + yOffset - 8, 60, 20, 6);
+                    ctx.fill();
+                    
+                    // Draw text
+                    ctx.fillStyle = raw > 0 ? '#28a745' : '#dc3545';
+                    ctx.font = 'bold 12px sans-serif';
+                    ctx.shadowColor = 'transparent';
+                    ctx.fillText(`F=${val}`, xMid, y + yOffset);
+                }
+            }
+        }
+    }
+    
+    // === FIX #3: DRAW MOMENTS - Fixed offset, no column drift ===
+    // === FIXED: DRAW MOMENTS AT CORRECT POSITIONS (AT JOINTS) ===
+if (vizSettings.moments) {
+    // Draw Column Moments (at top and bottom of each column)
     for (let i = 1; i <= analysisResults.nStories; i++) {
         for (let col = 0; col <= analysisResults.nSpans; col++) {
-            const x = getX(col);
-            const yMid = (getY(i) + getY(i-1)) / 2;
-            
-            // Column Shear (V) - Left of Column
-            if (vizSettings.shears && analysisResults.columns[i-1] && analysisResults.columns[i-1][col]) {
-               const val = analysisResults.columns[i-1][col].shear.toFixed(2);
-               drawResultBadge(ctx, `V=${val}`, x - 30, yMid, '#6f42c1', '#ffffff');
+            if (analysisResults.columns[i-1] && analysisResults.columns[i-1][col]) {
+                const x = getX(col);
+                const yTop = getY(i);
+                const yBot = getY(i-1);
+                
+                // Column top moment
+                const momentTop = analysisResults.columns[i-1][col].momentTop.toFixed(1);
+                drawMomentAtJoint(ctx, x, yTop, momentTop, '#fd7e14', 'top', 'column');
+                
+                // Column bottom moment
+                const momentBottom = analysisResults.columns[i-1][col].momentBottom.toFixed(1);
+                drawMomentAtJoint(ctx, x, yBot, momentBottom, '#fd7e14', 'bottom', 'column');
             }
-            
-            // Column Axial (P) - Right of Column
-            if (vizSettings.axials && analysisResults.columns[i-1] && analysisResults.columns[i-1][col]) {
-               const raw = analysisResults.columns[i-1][col].axial;
-               const val = Math.abs(raw).toFixed(2);
-               const type = raw > 0 ? '(T)' : '(C)';
-               drawResultBadge(ctx, `P=${val}${type}`, x + 30, yMid, '#fd7e14', '#ffffff');
-            }
-            
-            // Moments (M) - Ends of Columns
-            if (vizSettings.moments && analysisResults.columns[i-1] && analysisResults.columns[i-1][col]) {
-               const val = analysisResults.columns[i-1][col].momentTop.toFixed(1);
-               // Draw moment values at column ends
-               drawMomentIndicator(ctx, x, getY(i), val, '#666');
-               drawMomentIndicator(ctx, x, getY(i-1), val, '#666');
+        }
+    }
+    
+    // Draw Beam Moments (at left and right ends of each beam)
+    for (let i = 1; i <= analysisResults.nStories; i++) {
+        for (let span = 1; span <= analysisResults.nSpans; span++) {
+            if (analysisResults.beams[i-1] && analysisResults.beams[i-1][span-1]) {
+                const xLeft = getX(span-1);
+                const xRight = getX(span);
+                const y = getY(i);
+                
+                // Beam left moment
+                const momentLeft = analysisResults.beams[i-1][span-1].momentLeft.toFixed(1);
+                drawMomentAtJoint(ctx, xLeft, y, momentLeft, '#fd7e14', 'left', 'beam');
+                
+                // Beam right moment
+                const momentRight = analysisResults.beams[i-1][span-1].momentRight.toFixed(1);
+                drawMomentAtJoint(ctx, xRight, y, momentRight, '#fd7e14', 'right', 'beam');
             }
         }
     }
 }
+    
+    ctx.shadowColor = 'transparent';
+}
 
-// === DRAWING HELPERS ===
+// === IMPROVED DRAWING HELPERS ===
 function drawSupport(ctx, x, y) {
     ctx.beginPath();
-    ctx.moveTo(x - 10, y + 10);
+    ctx.moveTo(x - 15, y + 15);
     ctx.lineTo(x, y);
-    ctx.lineTo(x + 10, y + 10);
-    ctx.lineTo(x - 10, y + 10);
+    ctx.lineTo(x + 15, y + 15);
+    ctx.lineTo(x - 15, y + 15);
     ctx.fillStyle = '#6c757d';
     ctx.fill();
+    ctx.strokeStyle = '#333';
+    ctx.lineWidth = 2;
+    ctx.stroke();
 }
 
 function drawArrow(ctx, fromX, fromY, toX, toY, color) {
-    const headlen = 10;
+    const headlen = 12;
     const dx = toX - fromX;
     const dy = toY - fromY;
     const angle = Math.atan2(dy, dx);
+    
     ctx.strokeStyle = color;
     ctx.fillStyle = color;
-    ctx.lineWidth = 2;
+    ctx.lineWidth = 3;
     
+    // Draw arrow shaft
     ctx.beginPath();
     ctx.moveTo(fromX, fromY);
     ctx.lineTo(toX, toY);
     ctx.stroke();
     
+    // Draw arrow head
     ctx.beginPath();
     ctx.moveTo(toX, toY);
     ctx.lineTo(toX - headlen * Math.cos(angle - Math.PI / 6), toY - headlen * Math.sin(angle - Math.PI / 6));
     ctx.lineTo(toX - headlen * Math.cos(angle + Math.PI / 6), toY - headlen * Math.sin(angle + Math.PI / 6));
-    ctx.lineTo(toX, toY);
+    ctx.closePath();
     ctx.fill();
 }
 
 function drawResultBadge(ctx, text, x, y, bgColor, textColor) {
-    ctx.font = 'bold 11px sans-serif';
+    ctx.font = 'bold 12px sans-serif';
     const metrics = ctx.measureText(text);
-    const width = metrics.width + 12;
-    const height = 20;
+    const width = metrics.width + 16;
+    const height = 24;
     
     // Draw badge background with rounded corners
     ctx.beginPath();
-    ctx.roundRect(x - width/2, y - height/2, width, height, 4);
+    ctx.roundRect(x - width/2, y - height/2, width, height, 6);
     ctx.fillStyle = bgColor;
     ctx.fill();
     
     // Draw border
     ctx.strokeStyle = '#333';
-    ctx.lineWidth = 1;
+    ctx.lineWidth = 1.5;
     ctx.stroke();
     
     // Draw text
     ctx.fillStyle = textColor;
+    ctx.font = 'bold 12px sans-serif';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     ctx.fillText(text, x, y);
 }
 
 function drawLabel(ctx, text, x, y, color, align) {
-    ctx.font = 'bold 12px sans-serif';
+    ctx.font = 'bold 13px sans-serif';
     ctx.fillStyle = color;
     ctx.textAlign = align;
     ctx.fillText(text, x, y);
+    
+    // Add background for better visibility
+    const metrics = ctx.measureText(text);
+    const padding = 4;
+    ctx.save();
+    ctx.globalAlpha = 0.2;
+    ctx.fillStyle = 'white';
+    ctx.fillRect(x - metrics.width - padding, y - 12, metrics.width + padding * 2, 18);
+    ctx.restore();
+    
+    // Redraw text on top
+    ctx.fillStyle = color;
+    ctx.fillText(text, x, y);
 }
 
-function drawMomentIndicator(ctx, x, y, value, color) {
-    ctx.font = '10px sans-serif';
+function drawMomentIndicator(ctx, x, y, value, color, bold = false) {
+    ctx.font = bold ? 'bold 11px sans-serif' : '10px sans-serif';
     ctx.fillStyle = color;
     ctx.textAlign = 'center';
-    ctx.fillText(value, x + 8, y - 8);
+    
+    // Position moment value with offset
+    const offsetX = 25;
+    const offsetY = -15;
+    
+    // Draw background for better readability
+    ctx.save();
+    ctx.globalAlpha = 0.1;
+    ctx.fillStyle = color;
+    ctx.beginPath();
+    ctx.roundRect(x + offsetX - 15, y + offsetY - 8, 40, 18, 4);
+    ctx.fill();
+    ctx.restore();
+    
+    // Draw text
+    ctx.fillStyle = color;
+    ctx.fillText(`${value}`, x + offsetX, y + offsetY);
+    
+    // Add small arrow indicator for moment direction
+    ctx.beginPath();
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 1.5;
+    ctx.arc(x + offsetX - 12, y + offsetY - 2, 6, 0, Math.PI * 1.5, value < 0);
+    ctx.stroke();
+}
+// === NEW HELPER FUNCTION: Draw moment at specific joint position ===
+function drawMomentAtJoint(ctx, x, y, value, color, position, type) {
+    // Offset based on position to avoid overlapping with structure
+    let offsetX = 0;
+    let offsetY = 0;
+    
+    if (type === 'column') {
+        // Column moments - horizontal offset
+        if (position === 'top') {
+            offsetX = 25;  // Right side at top
+            offsetY = -10;
+        } else if (position === 'bottom') {
+            offsetX = -25; // Left side at bottom
+            offsetY = 10;
+        }
+    } else if (type === 'beam') {
+        // Beam moments - vertical offset
+        if (position === 'left') {
+            offsetX = -10;
+            offsetY = -25; // Above at left end
+        } else if (position === 'right') {
+            offsetX = 10;
+            offsetY = 25;  // Below at right end
+        }
+    }
+    
+    // Draw background
+    ctx.save();
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.95)';
+    ctx.shadowColor = 'rgba(0,0,0,0.1)';
+    ctx.shadowBlur = 4;
+    ctx.shadowOffsetY = 2;
+    ctx.beginPath();
+    ctx.roundRect(x + offsetX - 20, y + offsetY - 10, 50, 20, 6);
+    ctx.fill();
+    
+    // Draw text
+    ctx.fillStyle = color;
+    ctx.font = 'bold 11px sans-serif';
+    ctx.shadowColor = 'transparent';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(`${value}`, x + offsetX, y + offsetY);
+    
+    // Draw small moment indicator arc
+    ctx.beginPath();
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 1.5;
+    
+    if (type === 'column') {
+        // For columns: small arc around the joint
+        if (position === 'top') {
+            ctx.arc(x + 8, y - 8, 8, 0, Math.PI / 2);
+        } else {
+            ctx.arc(x - 8, y + 8, 8, Math.PI, Math.PI * 1.5);
+        }
+    } else {
+        // For beams: small arc at beam ends
+        if (position === 'left') {
+            ctx.arc(x - 8, y - 8, 8, Math.PI * 1.5, 0);
+        } else {
+            ctx.arc(x + 8, y + 8, 8, Math.PI / 2, Math.PI);
+        }
+    }
+    ctx.stroke();
+    
+    ctx.restore();
 }
 
 function toggleVizLayer(layer) {
@@ -2685,11 +3208,19 @@ function toggleVizLayer(layer) {
     
     // Update button state
     const btns = document.querySelectorAll('.viz-btn');
+    const layerMap = {
+        'colShear': 'Column Shear',
+        'beamShear': 'Beam Shear',
+        'colAxial': 'Column Axial',
+        'beamAxial': 'Beam Axial',
+        'moments': 'Show Moments',
+        'loads': 'Show Loads'
+    };
+    
     Array.from(btns).forEach(btn => {
-        if (btn.innerText.includes('Shear') && layer === 'shears') btn.classList.toggle('active');
-        if (btn.innerText.includes('Moment') && layer === 'moments') btn.classList.toggle('active');
-        if (btn.innerText.includes('Axial') && layer === 'axials') btn.classList.toggle('active');
-        if (btn.innerText.includes('Loads') && layer === 'loads') btn.classList.toggle('active');
+        if (btn.innerText.includes(layerMap[layer])) {
+            btn.classList.toggle('active');
+        }
     });
     
     initVisualization(); // Redraw
@@ -2845,10 +3376,14 @@ if (!CanvasRenderingContext2D.prototype.roundRect) {
     if (height < 2 * radius) radius = height / 2;
     this.beginPath();
     this.moveTo(x + radius, y);
-    this.arcTo(x + width, y, x + width, y + height, radius);
-    this.arcTo(x + width, y + height, x, y + height, radius);
-    this.arcTo(x, y + height, x, y, radius);
-    this.arcTo(x, y, x + width, y, radius);
+    this.lineTo(x + width - radius, y);
+    this.quadraticCurveTo(x + width, y, x + width, y + radius);
+    this.lineTo(x + width, y + height - radius);
+    this.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+    this.lineTo(x + radius, y + height);
+    this.quadraticCurveTo(x, y + height, x, y + height - radius);
+    this.lineTo(x, y + radius);
+    this.quadraticCurveTo(x, y, x + radius, y);
     this.closePath();
     return this;
   }
@@ -2856,5 +3391,4 @@ if (!CanvasRenderingContext2D.prototype.roundRect) {
 </script>
 
 </body>
-
 </html>
