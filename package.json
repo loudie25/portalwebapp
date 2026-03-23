@@ -1,0 +1,42 @@
+{
+  "name": "portal-method-capacitor",
+  "version": "1.0.0",
+  "description": "Portal Method Structural Analysis App - Capacitor Native",
+  "main": "index.js",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "capacitor:add": "npx cap add android && npx cap add ios",
+    "capacitor:sync": "npx cap sync",
+    "capacitor:open:android": "npx cap open android",
+    "capacitor:open:ios": "npx cap open ios",
+    "capacitor:build": "npm run build && npx cap copy",
+    "android": "npm run capacitor:build && npx cap open android",
+    "ios": "npm run capacitor:build && npx cap open ios"
+  },
+  "dependencies": {
+    "@capacitor/android": "^5.0.0",
+    "@capacitor/app": "^5.0.0",
+    "@capacitor/core": "^5.0.0",
+    "@capacitor/filesystem": "^5.0.0",
+    "@capacitor/ios": "^5.0.0",
+    "@capacitor/share": "^5.0.0",
+    "@capacitor/splash-screen": "^5.0.0",
+    "@capacitor/status-bar": "^5.0.0",
+    "html2canvas": "^1.4.1",
+    "jspdf": "^2.5.1"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^5.0.0",
+    "vite": "^4.0.0"
+  },
+  "keywords": [
+    "capacitor",
+    "structural-analysis",
+    "portal-method",
+    "civil-engineering"
+  ],
+  "author": "BSCE 4 Students",
+  "license": "MIT"
+}
