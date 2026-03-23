@@ -558,7 +558,7 @@ canvas {
 
         <div id="errorMessage" style="display: none;" class="alert alert-error"></div>
 
-        <form id="irregularForm" onsubmit="return false;">
+        <div id="irregularForm">
             <div class="grid-2">
                 <div class="input-group">
                     <label><i class="fas fa-layer-group"></i> Number of Storeys (1-5)</label>
@@ -583,7 +583,7 @@ canvas {
             <button type="button" class="btn btn-success btn-block" onclick="computeAnalysis()">
                 <i class="fas fa-calculator"></i> Compute Irregular Frame Analysis
             </button>
-        </form>
+        </div>
     </div>
 
     <div id="resultsArea" style="display: none;"></div>
@@ -771,31 +771,31 @@ function updateFormFields() {
         return;
     }
     
-    let html = `<div class="card"><div class="card-header"><i class="fas fa-weight-hanging"></i><h3>Storey Loads and Heights</h3></div><div class="grid-storey" id="storeyInputs"></div></div>`;
-    html += `<div class="card"><div class="card-header"><i class="fas fa-ruler"></i><h3>Span Lengths</h3></div><div class="grid-storey" id="spanInputs"></div></div>`;
-    html += `<div class="card"><div class="card-header"><i class="fas fa-check-circle"></i><h3>Active Spans Configuration</h3><p style="margin-bottom:10px;">Check = Span exists, Uncheck = Missing member</p><div id="activeSpansTable"></div></div></div>`;
+    let html = '<div class="card"><div class="card-header"><i class="fas fa-weight-hanging"></i><h3>Storey Loads and Heights</h3></div><div class="grid-storey" id="storeyInputs"></div></div>';
+    html += '<div class="card"><div class="card-header"><i class="fas fa-ruler"></i><h3>Span Lengths</h3></div><div class="grid-storey" id="spanInputs"></div></div>';
+    html += '<div class="card"><div class="card-header"><i class="fas fa-check-circle"></i><h3>Active Spans Configuration</h3><p style="margin-bottom:10px;">Check = Span exists, Uncheck = Missing member</p><div id="activeSpansTable"></div></div></div>';
     container.innerHTML = html;
     
     let storeyHTML = '';
     for (let i = 1; i <= numStoreys; i++) {
-        storeyHTML += `<div class="input-group"><label>Storey ${i} Load (kN)</label><input type="number" step="0.01" name="load_${i}" placeholder="e.g. 50" required></div>`;
-        storeyHTML += `<div class="input-group"><label>Storey ${i} Height (m)</label><input type="number" step="0.01" name="height_${i}" placeholder="e.g. 3.5" required></div>`;
+        storeyHTML += '<div class="input-group"><label>Storey ' + i + ' Load (kN)</label><input type="number" step="0.01" name="load_' + i + '" placeholder="e.g. 50" required></div>';
+        storeyHTML += '<div class="input-group"><label>Storey ' + i + ' Height (m)</label><input type="number" step="0.01" name="height_' + i + '" placeholder="e.g. 3.5" required></div>';
     }
     document.getElementById('storeyInputs').innerHTML = storeyHTML;
     
     let spanHTML = '';
     for (let j = 1; j <= numSpans; j++) {
-        spanHTML += `<div class="input-group"><label>Span ${j} Length (m)</label><input type="number" step="0.01" name="span_length_${j}" placeholder="e.g. 5.0" required></div>`;
+        spanHTML += '<div class="input-group"><label>Span ' + j + ' Length (m)</label><input type="number" step="0.01" name="span_length_' + j + '" placeholder="e.g. 5.0" required></div>';
     }
     document.getElementById('spanInputs').innerHTML = spanHTML;
     
     let tableHTML = '<div class="table-responsive"><table><thead><tr><th>Storey</th>';
-    for (let j = 1; j <= numSpans; j++) tableHTML += `<th>Span ${j}</th>`;
+    for (let j = 1; j <= numSpans; j++) tableHTML += '<th>Span ' + j + '</th>';
     tableHTML += '</tr></thead><tbody>';
     for (let i = numStoreys; i >= 1; i--) {
-        tableHTML += `<tr><td><strong>Storey ${i}</strong></td>`;
+        tableHTML += '<tr><td><strong>Storey ' + i + '</strong></td>';
         for (let j = 1; j <= numSpans; j++) {
-            tableHTML += `<td style="text-align:center;"><label class="checkbox-label"><input type="checkbox" name="active_${i}_${j}" checked></label></td>`;
+            tableHTML += '<td style="text-align:center;"><label class="checkbox-label"><input type="checkbox" name="active_' + i + '_' + j + '" checked></label></td>';
         }
         tableHTML += '</tr>';
     }
@@ -817,9 +817,9 @@ function resetForm() {
 
 function showError(message) {
     const errorDiv = document.getElementById('errorMessage');
-    errorDiv.innerHTML = `<i class="fas fa-exclamation-circle"></i><div><strong>Error:</strong> ${message}</div>`;
+    errorDiv.innerHTML = '<i class="fas fa-exclamation-circle"></i><div><strong>Error:</strong> ' + message + '</div>';
     errorDiv.style.display = 'flex';
-    setTimeout(() => errorDiv.style.display = 'none', 5000);
+    setTimeout(function() { errorDiv.style.display = 'none'; }, 5000);
 }
 
 function computeAnalysis() {
@@ -831,17 +831,17 @@ function computeAnalysis() {
     
     const loads = {}, heights = {};
     for (let i = 1; i <= numStoreys; i++) {
-        const loadVal = parseFloat(document.querySelector(`input[name="load_${i}"]`).value);
-        const heightVal = parseFloat(document.querySelector(`input[name="height_${i}"]`).value);
-        if (isNaN(loadVal) || isNaN(heightVal)) { showError(`Please enter Load and Height for Storey ${i}`); return; }
+        const loadVal = parseFloat(document.querySelector('input[name="load_' + i + '"]').value);
+        const heightVal = parseFloat(document.querySelector('input[name="height_' + i + '"]').value);
+        if (isNaN(loadVal) || isNaN(heightVal)) { showError("Please enter Load and Height for Storey " + i); return; }
         loads[i] = loadVal;
         heights[i] = heightVal;
     }
     
     const spanLengths = {};
     for (let j = 1; j <= numSpans; j++) {
-        const spanVal = parseFloat(document.querySelector(`input[name="span_length_${j}"]`).value);
-        if (isNaN(spanVal)) { showError(`Please enter Length for Span ${j}`); return; }
+        const spanVal = parseFloat(document.querySelector('input[name="span_length_' + j + '"]').value);
+        if (isNaN(spanVal)) { showError("Please enter Length for Span " + j); return; }
         spanLengths[j] = spanVal;
     }
     
@@ -849,7 +849,7 @@ function computeAnalysis() {
     for (let i = 1; i <= numStoreys; i++) {
         activeSpans[i] = {};
         for (let j = 1; j <= numSpans; j++) {
-            const cb = document.querySelector(`input[name="active_${i}_${j}"]`);
+            const cb = document.querySelector('input[name="active_' + i + '_' + j + '"]');
             activeSpans[i][j] = (cb && cb.checked) ? 1 : 0;
         }
     }
@@ -872,48 +872,35 @@ function displayResults(res) {
     const container = document.getElementById('resultsArea');
     container.style.display = 'block';
     
-    let html = `
-    <div class="card">
-        <div class="card-header"><i class="fas fa-list-ol"></i><h2>Step-by-Step Solution</h2></div>
-        <div class="viz-controls">
-            <button class="viz-btn active" onclick="showStep('step1')">1. Storey Shears</button>
-            <button class="viz-btn" onclick="showStep('step2')">2. Column Shears</button>
-            <button class="viz-btn" onclick="showStep('step3')">3. Moments</button>
-            <button class="viz-btn" onclick="showStep('step4')">4. Beam Shears</button>
-            <button class="viz-btn" onclick="showStep('step5')">5. Axial Forces</button>
-        </div>
-        <div id="step1" class="step-container active"><div class="step-title">Step 1: Storey Shear Forces</div><div class="step-formula">$$V_i = \\sum_{j=i}^{n} P_j$$</div><ul class="step-details" id="step1List"></ul></div>
-        <div id="step2" class="step-container"><div class="step-title">Step 2: Column Shear Distribution</div><div class="step-formula">$$V_{unit} = \\frac{V_{storey}}{\\sum units}$$</div><ul class="step-details" id="step2List"></ul></div>
-        <div id="step3" class="step-container"><div class="step-title">Step 3: Column Moments</div><div class="step-formula">$$M_{col} = V_{col} \\times \\frac{h}{2}$$</div><ul class="step-details" id="step3List"></ul></div>
-        <div id="step4" class="step-container"><div class="step-title">Step 4: Beam Vertical Shears</div><ul class="step-details" id="step4List"></ul></div>
-        <div id="step5" class="step-container"><div class="step-title">Step 5: Beam Axial Forces</div><ul class="step-details" id="step5List"></ul></div>
-    </div>
-    <div class="card">
-        <div class="card-header"><i class="fas fa-project-diagram"></i><h2>Structural Visualization</h2></div>
-        <div class="viz-controls">
-            <button class="viz-btn active" data-layer="colShears"><i class="fas fa-columns"></i> Column Shear</button>
-            <button class="viz-btn active" data-layer="beamShears"><i class="fas fa-grip-lines"></i> Beam Shear</button>
-            <button class="viz-btn active" data-layer="colAxials"><i class="fas fa-arrow-down"></i> Column Axial</button>
-            <button class="viz-btn active" data-layer="beamAxials"><i class="fas fa-arrows-alt-h"></i> Beam Axial</button>
-            <button class="viz-btn active" data-layer="moments"><i class="fas fa-redo-alt"></i> Moments</button>
-            <button class="viz-btn" data-layer="loads"><i class="fas fa-weight-hanging"></i> Loads</button>
-            <button class="btn btn-secondary" onclick="downloadCanvas()"><i class="fas fa-download"></i> Download</button>
-        </div>
-        <div class="viz-container"><canvas id="structureCanvas" width="1200" height="700"></canvas></div>
-        <div class="viz-legend">
-            <div class="legend-item"><span class="legend-color" style="background:#6f42c1;"></span> Column Shear (V)</div>
-            <div class="legend-item"><span class="legend-color" style="background:#007bff;"></span> Beam Shear (V)</div>
-            <div class="legend-item"><span class="legend-color" style="background:#fd7e14;"></span> Column Axial (f)</div>
-            <div class="legend-item"><span class="legend-color" style="background:#28a745;"></span> Beam Axial (f)</div>
-            <div class="legend-item"><span class="legend-color" style="background:#fd7e14;"></span> Moments (M)</div>
-            <div class="legend-item"><span class="legend-color" style="background:#dc3545;"></span> Loads (P)</div>
-        </div>
-    </div>
-    <div class="card">
-        <div class="card-header"><i class="fas fa-chart-bar"></i><h2>Detailed Results</h2></div>
-        <div id="detailedTables"></div>
-        <div class="btn-group"><button onclick="window.print()" class="btn btn-primary"><i class="fas fa-print"></i> Print Results</button></div>
-    </div>`;
+    let html = '<div class="card"><div class="card-header"><i class="fas fa-list-ol"></i><h2>Step-by-Step Solution</h2></div><div class="viz-controls">';
+    html += '<button class="viz-btn active" onclick="showStep(\'step1\')">1. Storey Shears</button>';
+    html += '<button class="viz-btn" onclick="showStep(\'step2\')">2. Column Shears</button>';
+    html += '<button class="viz-btn" onclick="showStep(\'step3\')">3. Moments</button>';
+    html += '<button class="viz-btn" onclick="showStep(\'step4\')">4. Beam Shears</button>';
+    html += '<button class="viz-btn" onclick="showStep(\'step5\')">5. Axial Forces</button>';
+    html += '</div>';
+    html += '<div id="step1" class="step-container active"><div class="step-title">Step 1: Storey Shear Forces</div><div class="step-formula">$$V_i = \\sum_{j=i}^{n} P_j$$</div><ul class="step-details" id="step1List"></ul></div>';
+    html += '<div id="step2" class="step-container"><div class="step-title">Step 2: Column Shear Distribution</div><div class="step-formula">$$V_{unit} = \\frac{V_{storey}}{\\sum units}$$</div><ul class="step-details" id="step2List"></ul></div>';
+    html += '<div id="step3" class="step-container"><div class="step-title">Step 3: Column Moments</div><div class="step-formula">$$M_{col} = V_{col} \\times \\frac{h}{2}$$</div><ul class="step-details" id="step3List"></ul></div>';
+    html += '<div id="step4" class="step-container"><div class="step-title">Step 4: Beam Vertical Shears</div><ul class="step-details" id="step4List"></ul></div>';
+    html += '<div id="step5" class="step-container"><div class="step-title">Step 5: Beam Axial Forces</div><ul class="step-details" id="step5List"></ul></div></div>';
+    html += '<div class="card"><div class="card-header"><i class="fas fa-project-diagram"></i><h2>Structural Visualization</h2></div>';
+    html += '<div class="viz-controls"><button class="viz-btn active" data-layer="colShears"><i class="fas fa-columns"></i> Column Shear</button>';
+    html += '<button class="viz-btn active" data-layer="beamShears"><i class="fas fa-grip-lines"></i> Beam Shear</button>';
+    html += '<button class="viz-btn active" data-layer="colAxials"><i class="fas fa-arrow-down"></i> Column Axial</button>';
+    html += '<button class="viz-btn active" data-layer="beamAxials"><i class="fas fa-arrows-alt-h"></i> Beam Axial</button>';
+    html += '<button class="viz-btn active" data-layer="moments"><i class="fas fa-redo-alt"></i> Moments</button>';
+    html += '<button class="viz-btn" data-layer="loads"><i class="fas fa-weight-hanging"></i> Loads</button>';
+    html += '<button class="btn btn-secondary" onclick="downloadCanvas()"><i class="fas fa-download"></i> Download</button></div>';
+    html += '<div class="viz-container"><canvas id="structureCanvas" width="1200" height="700"></canvas></div>';
+    html += '<div class="viz-legend"><div class="legend-item"><span class="legend-color" style="background:#6f42c1;"></span> Column Shear (V)</div>';
+    html += '<div class="legend-item"><span class="legend-color" style="background:#007bff;"></span> Beam Shear (V)</div>';
+    html += '<div class="legend-item"><span class="legend-color" style="background:#fd7e14;"></span> Column Axial (f)</div>';
+    html += '<div class="legend-item"><span class="legend-color" style="background:#28a745;"></span> Beam Axial (f)</div>';
+    html += '<div class="legend-item"><span class="legend-color" style="background:#fd7e14;"></span> Moments (M)</div>';
+    html += '<div class="legend-item"><span class="legend-color" style="background:#dc3545;"></span> Loads (P)</div></div></div>';
+    html += '<div class="card"><div class="card-header"><i class="fas fa-chart-bar"></i><h2>Detailed Results</h2></div><div id="detailedTables"></div>';
+    html += '<div class="btn-group"><button onclick="window.print()" class="btn btn-primary"><i class="fas fa-print"></i> Print Results</button></div></div>';
     container.innerHTML = html;
     
     // Populate steps
@@ -924,7 +911,7 @@ function displayResults(res) {
             calc += res.loads[j].toFixed(1);
             if (j < res.numStoreys) calc += ' + ';
         }
-        step1Html += `<li>Storey ${i}: V = ${calc} = ${res.storeyShears[i].toFixed(2)} kN</li>`;
+        step1Html += '<li>Storey ' + i + ': V = ' + calc + ' = ' + res.storeyShears[i].toFixed(2) + ' kN</li>';
     }
     document.getElementById('step1List').innerHTML = step1Html;
     
@@ -932,7 +919,7 @@ function displayResults(res) {
     for (let i = 1; i <= res.numStoreys; i++) {
         let ext = (res.exteriorCols[i] || []).join(', ') || 'none';
         let int = (res.interiorCols[i] || []).join(', ') || 'none';
-        step2Html += `<li><strong>Storey ${i}</strong>: V_storey = ${res.storeyShears[i].toFixed(2)} kN, V_unit = ${res.V_unit[i].toFixed(3)} kN<br>Exterior columns: ${ext} → V = ${res.V_unit[i].toFixed(2)} kN, Interior: ${int} → V = ${(2*res.V_unit[i]).toFixed(2)} kN</li>`;
+        step2Html += '<li><strong>Storey ' + i + '</strong>: V_storey = ' + res.storeyShears[i].toFixed(2) + ' kN, V_unit = ' + res.V_unit[i].toFixed(3) + ' kN<br>Exterior columns: ' + ext + ' → V = ' + res.V_unit[i].toFixed(2) + ' kN, Interior: ' + int + ' → V = ' + (2*res.V_unit[i]).toFixed(2) + ' kN</li>';
     }
     document.getElementById('step2List').innerHTML = step2Html;
     
@@ -940,7 +927,7 @@ function displayResults(res) {
     for (let i = 1; i <= res.numStoreys; i++) {
         for (let c = 0; c <= res.numSpans; c++) {
             if (res.columnMoments[i] && res.columnMoments[i][c]) {
-                step3Html += `<li>Storey ${i}, Column ${c}: M = ${res.columnShears[i][c].toFixed(2)} × ${(res.heights[i]/2).toFixed(2)} = ${res.columnMoments[i][c].toFixed(2)} kN·m</li>`;
+                step3Html += '<li>Storey ' + i + ', Column ' + c + ': M = ' + res.columnShears[i][c].toFixed(2) + ' × ' + (res.heights[i]/2).toFixed(2) + ' = ' + res.columnMoments[i][c].toFixed(2) + ' kN·m</li>';
             }
         }
     }
@@ -950,7 +937,7 @@ function displayResults(res) {
     for (let i = res.numStoreys; i >= 1; i--) {
         for (let s = 1; s <= res.numSpans; s++) {
             if (res.beamShears[i] && res.beamShears[i][s]) {
-                step4Html += `<li>Storey ${i}, Span ${s}: V = ${res.beamShears[i][s].toFixed(2)} kN</li>`;
+                step4Html += '<li>Storey ' + i + ', Span ' + s + ': V = ' + res.beamShears[i][s].toFixed(2) + ' kN</li>';
             }
         }
     }
@@ -960,41 +947,47 @@ function displayResults(res) {
     for (let i = res.numStoreys; i >= 1; i--) {
         for (let s = 1; s <= res.numSpans; s++) {
             if (res.beamAxialForces[i] && res.beamAxialForces[i][s]) {
-                step5Html += `<li>Storey ${i}, Span ${s}: f = ${res.beamAxialForces[i][s].toFixed(2)} kN</li>`;
+                step5Html += '<li>Storey ' + i + ', Span ' + s + ': f = ' + res.beamAxialForces[i][s].toFixed(2) + ' kN</li>';
             }
         }
     }
     document.getElementById('step5List').innerHTML = step5Html;
     
     // Detailed tables
-    let tables = `<div class="result-card"><h4>Column Shears (kN)</h4><div class="table-responsive">` + generateColumnTable(res, 'columnShears') + `</div></div>`;
-    tables += `<div class="result-card"><h4>Beam Shears (kN)</h4><div class="table-responsive">` + generateBeamTable(res, 'beamShears') + `</div></div>`;
-    tables += `<div class="result-card"><h4>Beam Axial Forces (kN)</h4><div class="table-responsive">` + generateBeamTable(res, 'beamAxialForces') + `</div></div>`;
-    tables += `<div class="result-card"><h4>Column Axial Forces (kN) [C=Compression, T=Tension]</h4><div class="table-responsive">` + generateColumnAxialTable(res) + `</div></div>`;
+    let tables = '<div class="result-card"><h4>Column Shears (kN)</h4><div class="table-responsive">' + generateColumnTable(res, 'columnShears') + '</div></div>';
+    tables += '<div class="result-card"><h4>Beam Shears (kN)</h4><div class="table-responsive">' + generateBeamTable(res, 'beamShears') + '</div></div>';
+    tables += '<div class="result-card"><h4>Beam Axial Forces (kN)</h4><div class="table-responsive">' + generateBeamTable(res, 'beamAxialForces') + '</div></div>';
+    tables += '<div class="result-card"><h4>Column Axial Forces (kN) [C=Compression, T=Tension]</h4><div class="table-responsive">' + generateColumnAxialTable(res) + '</div></div>';
     document.getElementById('detailedTables').innerHTML = tables;
     
     // Attach layer toggles
-    document.querySelectorAll('[data-layer]').forEach(btn => {
+    document.querySelectorAll('[data-layer]').forEach(function(btn) {
         btn.addEventListener('click', function() {
             const layer = this.getAttribute('data-layer');
             vizSettings[layer] = !vizSettings[layer];
-            this.classList.toggle('active', vizSettings[layer]);
+            if (vizSettings[layer]) {
+                this.classList.add('active');
+            } else {
+                this.classList.remove('active');
+            }
             if (currentResults) drawStructure(currentResults);
         });
     });
     
-    MathJax.typesetPromise && MathJax.typesetPromise();
+    if (window.MathJax) {
+        MathJax.typesetPromise();
+    }
 }
 
 function generateColumnTable(res, type) {
-    let html = '<table><thead> <tr><th>Storey</th>';
-    for (let c = 0; c <= res.numSpans; c++) html += `<th>Col ${c}</th>`;
+    let html = '<table><thead><tr><th>Storey</th>';
+    for (let c = 0; c <= res.numSpans; c++) html += '<th>Col ' + c + '</th>';
     html += '</tr></thead><tbody>';
     for (let i = res.numStoreys; i >= 1; i--) {
-        html += `<tr><td>${i}</td>`;
+        html += '<tr><td>' + i + '</td>';
         for (let c = 0; c <= res.numSpans; c++) {
             let val = (res[type][i] && res[type][i][c]) ? res[type][i][c].toFixed(2) : '—';
-            html += `<td>${val}</td>`;
+            html += '<td>' + val + '</td>';
         }
         html += '</tr>';
     }
@@ -1004,13 +997,13 @@ function generateColumnTable(res, type) {
 
 function generateBeamTable(res, type) {
     let html = '<table><thead><tr><th>Storey</th>';
-    for (let s = 1; s <= res.numSpans; s++) html += `<th>Span ${s}</th>`;
+    for (let s = 1; s <= res.numSpans; s++) html += '<th>Span ' + s + '</th>';
     html += '</tr></thead><tbody>';
     for (let i = res.numStoreys; i >= 1; i--) {
-        html += `<tr><td>${i}</td>`;
+        html += '<tr><td>' + i + '</td>';
         for (let s = 1; s <= res.numSpans; s++) {
             let val = (res[type][i] && res[type][i][s]) ? res[type][i][s].toFixed(2) : (res.activeSpans[i][s] ? '0' : '—');
-            html += `<td>${val}</td>`;
+            html += '<td>' + val + '</td>';
         }
         html += '</tr>';
     }
@@ -1020,17 +1013,17 @@ function generateBeamTable(res, type) {
 
 function generateColumnAxialTable(res) {
     let html = '<table><thead><tr><th>Storey</th>';
-    for (let c = 0; c <= res.numSpans; c++) html += `<th>Col ${c}</th>`;
+    for (let c = 0; c <= res.numSpans; c++) html += '<th>Col ' + c + '</th>';
     html += '</tr></thead><tbody>';
     for (let i = res.numStoreys; i >= 1; i--) {
-        html += `<tr><td>${i}</td>`;
+        html += '<tr><td>' + i + '</td>';
         for (let c = 0; c <= res.numSpans; c++) {
             if (res.axialForces[i] && res.axialForces[i][c] !== undefined) {
                 let val = Math.abs(res.axialForces[i][c]).toFixed(2);
                 let type = res.axialForces[i][c] > 0 ? 'T' : 'C';
-                html += `<td>${val} ${type}</td>`;
+                html += '<td>' + val + ' ' + type + '</td>';
             } else {
-                html += `<td>—</td>`;
+                html += '<td>—</td>';
             }
         }
         html += '</tr>';
@@ -1051,8 +1044,8 @@ function drawStructure(res) {
     ctx.clearRect(0, 0, width, height);
     
     const startX = (width - (res.numSpans * spanW)) / 2;
-    const getX = col => startX + col * spanW;
-    const getY = st => height - pad - (st * storeyH);
+    const getX = function(col) { return startX + col * spanW; };
+    const getY = function(st) { return height - pad - (st * storeyH); };
     
     // Draw columns
     for (let i = 1; i <= res.numStoreys; i++) {
@@ -1106,44 +1099,49 @@ function drawStructure(res) {
         for (let c = 0; c <= res.numSpans; c++) {
             if (res.columnShears[i] && res.columnShears[i][c] && vizSettings.colShears) {
                 ctx.fillStyle = '#6f42c1';
-                ctx.fillText(`V=${res.columnShears[i][c].toFixed(1)}`, getX(c) - 45, (getY(i - 1) + getY(i)) / 2);
+                ctx.fillText('V=' + res.columnShears[i][c].toFixed(1), getX(c) - 45, (getY(i - 1) + getY(i)) / 2);
             }
             if (res.axialForces[i] && res.axialForces[i][c] !== undefined && vizSettings.colAxials) {
                 let val = Math.abs(res.axialForces[i][c]).toFixed(1);
                 let type = res.axialForces[i][c] > 0 ? 'T' : 'C';
                 ctx.fillStyle = '#fd7e14';
-                ctx.fillText(`f=${val}${type}`, getX(c) + 40, (getY(i - 1) + getY(i)) / 2);
+                ctx.fillText('f=' + val + type, getX(c) + 40, (getY(i - 1) + getY(i)) / 2);
             }
         }
         for (let s = 1; s <= res.numSpans; s++) {
             if (res.beamShears[i] && res.beamShears[i][s] && vizSettings.beamShears) {
                 ctx.fillStyle = '#007bff';
-                ctx.fillText(`V=${res.beamShears[i][s].toFixed(1)}`, (getX(s - 1) + getX(s)) / 2, getY(i) - 20);
+                ctx.fillText('V=' + res.beamShears[i][s].toFixed(1), (getX(s - 1) + getX(s)) / 2, getY(i) - 20);
             }
             if (res.beamAxialForces[i] && res.beamAxialForces[i][s] && vizSettings.beamAxials) {
                 ctx.fillStyle = '#28a745';
-                ctx.fillText(`f=${res.beamAxialForces[i][s].toFixed(1)}`, (getX(s - 1) + getX(s)) / 2, getY(i) + 25);
+                ctx.fillText('f=' + res.beamAxialForces[i][s].toFixed(1), (getX(s - 1) + getX(s)) / 2, getY(i) + 25);
             }
         }
         if (vizSettings.moments) {
             for (let c = 0; c <= res.numSpans; c++) {
                 if (res.columnMoments[i] && res.columnMoments[i][c]) {
                     ctx.fillStyle = '#fd7e14';
-                    ctx.fillText(`M=${res.columnMoments[i][c].toFixed(1)}`, getX(c) + 55, getY(i) - 12);
+                    ctx.fillText('M=' + res.columnMoments[i][c].toFixed(1), getX(c) + 55, getY(i) - 12);
                 }
             }
         }
         if (vizSettings.loads) {
             ctx.fillStyle = '#dc3545';
-            ctx.fillText(`P=${res.loads[i].toFixed(1)} kN`, startX - 70, getY(i) - 15);
+            ctx.fillText('P=' + res.loads[i].toFixed(1) + ' kN', startX - 70, getY(i) - 15);
         }
     }
 }
 
 function showStep(stepId) {
-    document.querySelectorAll('.step-container').forEach(s => s.classList.remove('active'));
+    var steps = document.querySelectorAll('.step-container');
+    for (var i = 0; i < steps.length; i++) {
+        steps[i].classList.remove('active');
+    }
     document.getElementById(stepId).classList.add('active');
-    MathJax.typesetPromise && MathJax.typesetPromise();
+    if (window.MathJax) {
+        MathJax.typesetPromise();
+    }
 }
 
 function downloadCanvas() {
@@ -1159,7 +1157,11 @@ function downloadCanvas() {
 
 function openAboutModal() { document.getElementById('aboutModal').style.display = 'block'; }
 function closeAboutModal() { document.getElementById('aboutModal').style.display = 'none'; }
-window.onclick = e => { if (e.target === document.getElementById('aboutModal')) closeAboutModal(); };
+
+window.onclick = function(e) { 
+    if (e.target === document.getElementById('aboutModal')) closeAboutModal(); 
+};
+
 document.getElementById('numStoreys').addEventListener('input', updateFormFields);
 document.getElementById('numSpans').addEventListener('input', updateFormFields);
 updateFormFields();
