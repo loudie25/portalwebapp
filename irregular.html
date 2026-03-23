@@ -2,29 +2,13 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-<title>Portal Method – Irregular Frame Structural Analysis</title>
-<!-- MathJax for LaTeX rendering -->
-<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" id="MathJax-script" async></script>
-<!-- SweetAlert2 for notifications -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Portal Method - Irregular Frame Structural Analysis</title>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
-<!-- Font Awesome 6 -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
-:root {
-    --primary: #1a73e8;
-    --primary-dark: #0d47a1;
-    --secondary: #6c757d;
-    --success: #28a745;
-    --warning: #ffc107;
-    --danger: #dc3545;
-    --light: #f8f9fa;
-    --dark: #343a40;
-    --border-radius: 12px;
-    --box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-}
-
 * {
     margin: 0;
     padding: 0;
@@ -32,227 +16,161 @@
 }
 
 body {
-    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-    background: linear-gradient(135deg, #f5f7fa 0%, #e4edf5 100%);
-    color: var(--dark);
-    line-height: 1.6;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     min-height: 100vh;
+    padding: 20px;
 }
 
 .container {
     max-width: 1400px;
     margin: 0 auto;
-    padding: 20px;
-}
-
-.navbar {
-    background: linear-gradient(90deg, var(--primary-dark) 0%, var(--primary) 100%);
-    color: white;
-    padding: 16px 24px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    position: sticky;
-    top: 0;
-    z-index: 1000;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 15px;
-}
-
-.brand {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    font-weight: 700;
-    font-size: 1.3rem;
-}
-
-.brand-icon {
-    width: 40px;
-    height: 40px;
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.nav-links {
-    display: flex;
-    gap: 15px;
-    align-items: center;
-    flex-wrap: wrap;
 }
 
 .card {
     background: white;
-    border-radius: var(--border-radius);
+    border-radius: 15px;
     padding: 25px;
     margin-bottom: 25px;
-    box-shadow: var(--box-shadow);
-    border: 1px solid rgba(0, 0, 0, 0.05);
-    transition: all 0.3s ease;
-}
-
-.card:hover {
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
 }
 
 .card-header {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 15px;
     margin-bottom: 20px;
     padding-bottom: 15px;
-    border-bottom: 2px solid #e9ecef;
+    border-bottom: 2px solid #e0e0e0;
 }
 
 .card-header i {
-    color: var(--primary);
-    font-size: 1.5rem;
+    font-size: 28px;
+    color: #667eea;
+}
+
+h1, h2, h3 {
+    color: #333;
 }
 
 .btn {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 600;
+    transition: all 0.3s;
     display: inline-flex;
     align-items: center;
-    justify-content: center;
     gap: 8px;
-    padding: 12px 20px;
-    border-radius: 8px;
-    font-weight: 600;
-    border: none;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    font-size: 16px;
 }
 
 .btn-primary {
-    background: var(--primary);
+    background: #667eea;
     color: white;
 }
 
 .btn-primary:hover {
-    background: var(--primary-dark);
-    transform: translateY(-2px);
-}
-
-.btn-secondary {
-    background: var(--secondary);
-    color: white;
-}
-
-.btn-secondary:hover {
-    background: #5a6268;
+    background: #5a67d8;
     transform: translateY(-2px);
 }
 
 .btn-success {
-    background: var(--success);
+    background: #48bb78;
     color: white;
 }
 
 .btn-success:hover {
-    background: #218838;
+    background: #38a169;
     transform: translateY(-2px);
 }
 
 .btn-danger {
-    background: var(--danger);
+    background: #f56565;
     color: white;
 }
 
 .btn-danger:hover {
-    background: #c82333;
+    background: #e53e3e;
+    transform: translateY(-2px);
+}
+
+.btn-secondary {
+    background: #718096;
+    color: white;
+}
+
+.btn-secondary:hover {
+    background: #4a5568;
     transform: translateY(-2px);
 }
 
 .btn-block {
     width: 100%;
-    padding: 16px;
-    font-size: 1.1rem;
-}
-
-.btn-group {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin-top: 20px;
-}
-
-.input-group {
-    margin-bottom: 20px;
-}
-
-.input-group label {
-    display: block;
-    margin-bottom: 8px;
-    font-weight: 600;
-    color: var(--dark);
-}
-
-.input-group input {
-    width: 100%;
-    padding: 12px 16px;
-    border: 2px solid #e9ecef;
-    border-radius: 8px;
-    font-size: 15px;
-    transition: all 0.3s ease;
-}
-
-.input-group input:focus {
-    outline: none;
-    border-color: var(--primary);
-    box-shadow: 0 0 0 3px rgba(26, 115, 232, 0.1);
-}
-
-.input-group small {
-    display: block;
-    margin-top: 5px;
-    color: var(--secondary);
-    font-size: 0.8rem;
+    justify-content: center;
 }
 
 .grid-2 {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 20px;
+    margin-bottom: 20px;
+}
+
+.input-group {
+    margin-bottom: 15px;
+}
+
+.input-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #4a5568;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 10px 15px;
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 14px;
+    transition: border-color 0.3s;
+}
+
+.input-group input:focus {
+    outline: none;
+    border-color: #667eea;
 }
 
 .grid-storey {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-    gap: 20px;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 15px;
     margin-bottom: 20px;
 }
 
 .table-responsive {
     overflow-x: auto;
     margin: 20px 0;
-    border-radius: 8px;
-    border: 1px solid #e9ecef;
 }
 
 table {
     width: 100%;
     border-collapse: collapse;
-    min-width: 500px;
+    background: white;
 }
 
 th, td {
-    padding: 14px 16px;
+    padding: 12px;
     text-align: center;
-    border: 1px solid #e9ecef;
+    border: 1px solid #e2e8f0;
 }
 
 th {
-    background: #e3f2fd;
+    background: #f7fafc;
     font-weight: 600;
-    color: var(--primary-dark);
-}
-
-tr:nth-child(even) {
-    background: #f9f9f9;
+    color: #4a5568;
 }
 
 .checkbox-label {
@@ -261,60 +179,37 @@ tr:nth-child(even) {
     justify-content: center;
     width: 40px;
     height: 40px;
-    background: white;
-    border: 2px solid #e9ecef;
-    border-radius: 6px;
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.3s;
 }
 
 .checkbox-label:hover {
-    border-color: var(--primary);
-    background: #f0f7ff;
+    border-color: #667eea;
+    background: #f7fafc;
 }
 
 .checkbox-label input {
     width: 20px;
     height: 20px;
     cursor: pointer;
-    margin: 0;
-}
-
-.alert {
-    padding: 18px 20px;
-    border-radius: 8px;
-    margin: 20px 0;
-    display: flex;
-    align-items: flex-start;
-    gap: 12px;
-}
-
-.alert-error {
-    background: #fdeaea;
-    border-left: 4px solid var(--danger);
-    color: #721c24;
 }
 
 .viz-container {
-    width: 100%;
+    background: #f7fafc;
+    border-radius: 10px;
+    padding: 20px;
     overflow-x: auto;
-    overflow-y: auto;
-    background: white;
-    border: 1px solid #e9ecef;
-    border-radius: 8px;
-    margin: 10px 0;
-    padding: 10px;
-    text-align: center;
-    min-height: 550px;
+    min-height: 500px;
 }
 
 canvas {
-    background: white;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
     display: block;
     margin: 0 auto;
-    max-width: 100%;
-    height: auto;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
 }
 
 .viz-controls {
@@ -326,50 +221,42 @@ canvas {
 }
 
 .viz-btn {
-    font-size: 14px;
     padding: 8px 16px;
-    border: 2px solid #e9ecef;
     background: white;
+    border: 2px solid #e2e8f0;
     border-radius: 20px;
     cursor: pointer;
-    transition: all 0.3s ease;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-weight: 500;
-}
-
-.viz-btn:hover {
-    border-color: var(--primary);
-    background: #f0f7ff;
+    transition: all 0.3s;
+    font-size: 14px;
 }
 
 .viz-btn.active {
-    background: var(--primary);
+    background: #667eea;
     color: white;
-    border-color: var(--primary);
+    border-color: #667eea;
+}
+
+.viz-btn:hover {
+    border-color: #667eea;
+    transform: translateY(-2px);
 }
 
 .viz-legend {
     display: flex;
     flex-wrap: wrap;
-    gap: 15px;
+    gap: 20px;
     justify-content: center;
-    margin: 15px 0;
-    padding: 10px;
-    background: var(--light);
-    border-radius: 8px;
+    margin-top: 20px;
+    padding: 15px;
+    background: #f7fafc;
+    border-radius: 10px;
 }
 
 .legend-item {
     display: flex;
     align-items: center;
     gap: 8px;
-    font-size: 13px;
-    padding: 5px 10px;
-    background: white;
-    border-radius: 20px;
-    border: 1px solid #e9ecef;
+    font-size: 12px;
 }
 
 .legend-color {
@@ -379,29 +266,23 @@ canvas {
 }
 
 .step-container {
-    margin: 25px 0;
-    padding: 20px;
-    background: var(--light);
-    border-radius: 8px;
-    border-left: 4px solid var(--primary);
     display: none;
-    max-height: 500px;
-    overflow-y: auto;
+    padding: 20px;
+    background: #f7fafc;
+    border-radius: 10px;
+    margin-top: 20px;
 }
 
 .step-container.active {
     display: block;
-    animation: fadeIn 0.5s ease;
+    animation: fadeIn 0.5s;
 }
 
 .step-title {
-    font-weight: 700;
-    color: var(--primary);
+    font-size: 20px;
+    font-weight: bold;
+    color: #667eea;
     margin-bottom: 15px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-size: 1.3rem;
 }
 
 .step-formula {
@@ -409,348 +290,161 @@ canvas {
     padding: 20px;
     border-radius: 8px;
     margin: 15px 0;
-    font-family: 'Times New Roman', serif;
-    border: 1px solid #e9ecef;
+    text-align: center;
 }
 
 .step-details {
-    margin-top: 15px;
-    padding-left: 20px;
+    list-style: none;
+    padding: 0;
 }
 
 .step-details li {
-    margin-bottom: 10px;
-    padding: 8px 0;
-    border-bottom: 1px dashed #eee;
-    list-style-type: none;
+    padding: 10px;
+    border-bottom: 1px solid #e2e8f0;
 }
 
 .result-card {
-    background: #f8fbff;
+    background: #f7fafc;
     padding: 20px;
-    border-radius: 8px;
-    margin: 15px 0;
-    border: 1px solid #e1ecff;
-}
-
-.result-card h4 {
-    margin-top: 0;
-    color: var(--primary);
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 15px;
-}
-
-.footer {
-    margin-top: 40px;
-    padding: 20px;
-    text-align: center;
-    color: var(--secondary);
-    font-size: 14px;
-    border-top: 1px solid #e9ecef;
-    background: white;
-    border-radius: var(--border-radius);
+    border-radius: 10px;
+    margin: 20px 0;
 }
 
 .modal {
     display: none;
     position: fixed;
-    z-index: 2000;
+    z-index: 1000;
     left: 0;
     top: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    backdrop-filter: blur(2px);
-    overflow-y: auto;
+    background: rgba(0,0,0,0.5);
 }
 
 .modal-content {
-    background-color: white;
-    margin: 5% auto;
+    background: white;
+    margin: 50px auto;
     width: 90%;
-    max-width: 700px;
-    border-radius: var(--border-radius);
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
-    animation: slideIn 0.3s ease;
+    max-width: 600px;
+    border-radius: 15px;
+    animation: slideIn 0.3s;
 }
 
 .modal-header {
-    background: linear-gradient(90deg, var(--primary-dark) 0%, var(--primary) 100%);
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
-    padding: 20px 25px;
-    border-radius: var(--border-radius) var(--border-radius) 0 0;
+    padding: 20px;
+    border-radius: 15px 15px 0 0;
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
 
 .modal-close {
-    background: rgba(255, 255, 255, 0.2);
+    background: none;
     border: none;
     color: white;
-    font-size: 1.5rem;
+    font-size: 28px;
     cursor: pointer;
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    transition: all 0.3s ease;
 }
 
 .modal-body {
-    padding: 25px;
+    padding: 20px;
     max-height: 70vh;
     overflow-y: auto;
 }
 
-.team-member {
-    background: var(--light);
-    padding: 15px;
-    border-radius: 8px;
-    margin-bottom: 10px;
+.footer {
     text-align: center;
+    padding: 20px;
+    color: white;
 }
 
 @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
+    from { opacity: 0; transform: translateY(20px); }
     to { opacity: 1; transform: translateY(0); }
 }
 
 @keyframes slideIn {
-    from { opacity: 0; transform: translateY(-30px); }
-    to { opacity: 1; transform: translateY(0); }
+    from { transform: translateY(-50px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
 }
 
 @media (max-width: 768px) {
-    .container { padding: 15px; }
-    .grid-2 { grid-template-columns: 1fr; }
-    .navbar { flex-direction: column; text-align: center; }
-    .btn-block { padding: 14px; }
-    .card { padding: 20px; }
+    .grid-2 {
+        grid-template-columns: 1fr;
+    }
+    
+    .btn {
+        padding: 8px 16px;
+        font-size: 14px;
+    }
+    
+    .card {
+        padding: 15px;
+    }
 }
 </style>
 </head>
 <body>
-
-<div class="navbar">
-    <div class="brand">
-        <div class="brand-icon"><i class="fas fa-building"></i></div>
-        <div>Portal Method - Irregular Frame Analysis</div>
-    </div>
-    <div class="nav-links">
-        <button class="btn btn-secondary" onclick="resetForm()"><i class="fas fa-plus"></i> New Analysis</button>
-        <button class="btn btn-secondary" onclick="openAboutModal()"><i class="fas fa-info-circle"></i> About</button>
-        <div style="font-size: 13px; background: rgba(255,255,255,0.2); padding: 4px 10px; border-radius: 20px;">BSCE 4 – 2025</div>
-    </div>
-</div>
-
 <div class="container">
     <div class="card">
         <div class="card-header">
             <i class="fas fa-building"></i>
-            <h1>Enhanced Irregular Frame Solver</h1>
+            <h1>Irregular Frame Portal Method Analysis</h1>
         </div>
-        <p style="color: var(--secondary); margin-bottom: 20px;">
-            Advanced portal method analysis for irregular structures with variable spans and missing members.
-            Enter the structure configuration below and click "Compute Analysis" to get results.
-        </p>
-
-        <div id="errorMessage" style="display: none;" class="alert alert-error"></div>
-
-        <div id="irregularForm">
-            <div class="grid-2">
-                <div class="input-group">
-                    <label><i class="fas fa-layer-group"></i> Number of Storeys (1-5)</label>
-                    <input type="number" id="numStoreys" min="1" max="5" value="3" required>
-                    <small>Enter a number between 1 and 5</small>
-                </div>
-                <div class="input-group">
-                    <label><i class="fas fa-grip-lines"></i> Number of Spans (1-6)</label>
-                    <input type="number" id="numSpans" min="1" max="6" value="3" required>
-                    <small>Enter a number between 1 and 6</small>
-                </div>
+        
+        <div class="grid-2">
+            <div class="input-group">
+                <label><i class="fas fa-layer-group"></i> Number of Storeys (1-5)</label>
+                <input type="number" id="numStoreys" min="1" max="5" value="3">
             </div>
-
-            <div class="btn-group" style="justify-content: flex-end;">
-                <button type="button" class="btn btn-danger" onclick="clearAllInputs()">
-                    <i class="fas fa-eraser"></i> Clear All Inputs
-                </button>
+            <div class="input-group">
+                <label><i class="fas fa-grip-lines"></i> Number of Spans (1-6)</label>
+                <input type="number" id="numSpans" min="1" max="6" value="3">
             </div>
-
-            <div id="dynamicInputs"></div>
-
-            <button type="button" class="btn btn-success btn-block" onclick="computeAnalysis()">
-                <i class="fas fa-calculator"></i> Compute Irregular Frame Analysis
-            </button>
         </div>
+        
+        <div class="btn-group" style="margin-bottom: 20px;">
+            <button class="btn btn-secondary" onclick="updateForm()"><i class="fas fa-sync-alt"></i> Generate Input Fields</button>
+            <button class="btn btn-danger" onclick="clearAll()"><i class="fas fa-trash"></i> Clear All</button>
+        </div>
+        
+        <div id="inputFields"></div>
+        
+        <button class="btn btn-success btn-block" onclick="compute()">
+            <i class="fas fa-calculator"></i> Compute Analysis
+        </button>
     </div>
-
-    <div id="resultsArea" style="display: none;"></div>
-
+    
+    <div id="results" style="display: none;"></div>
+    
     <div class="footer">
-        <div>Developed by BSCE 4 – Portal Method Project (2025)</div>
-        <div style="margin-top: 8px; font-size: 12px;">Enhanced Irregular Frame Analysis | Professional Formulas with LaTeX</div>
+        <p>BSCE 4 - Portal Method Project 2025 | Structural Analysis Tool</p>
     </div>
 </div>
 
 <div id="aboutModal" class="modal">
     <div class="modal-content">
         <div class="modal-header">
-            <h3><i class="fas fa-info-circle"></i> About This Project</h3>
-            <button class="modal-close" onclick="closeAboutModal()">&times;</button>
+            <h3><i class="fas fa-users"></i> About This Project</h3>
+            <button class="modal-close" onclick="closeModal()">&times;</button>
         </div>
         <div class="modal-body">
-            <div style="background: #e3f2fd; padding: 15px; border-radius: 8px; margin-bottom: 20px; text-align: center;">
-                <strong>DEVELOPMENT OF A WEB-BASED APPLICATION FOR STRUCTURAL ANALYSIS USING THE PORTAL METHOD</strong>
-            </div>
-            <p>This project is developed by BSCE 4th Year Students from the BiPSU School of Engineering Civil Engineering Department.</p>
-            <h4>Project Team:</h4>
-            <div class="team-member"><strong>Lourd James Ando</strong><br>Civil Engineering</div>
-            <div class="team-member"><strong>Jim Ariel Diezmo</strong><br>Civil Engineering</div>
-            <div class="team-member"><strong>Karen Mangco</strong><br>Civil Engineering</div>
-            <div class="team-member"><strong>Roma Grace Romero</strong><br>Civil Engineering</div>
-            <p style="margin-top: 20px;"><strong>Features:</strong> Irregular frame analysis with missing members, step-by-step solution, interactive visualization, mobile-responsive design.</p>
+            <p><strong>Development of a Web-Based Application for Structural Analysis Using the Portal Method</strong></p>
+            <p>Developed by BSCE 4th Year Students:</p>
+            <ul style="margin-top: 10px;">
+                <li>Lourd James Ando</li>
+                <li>Jim Ariel Diezmo</li>
+                <li>Karen Mangco</li>
+                <li>Roma Grace Romero</li>
+            </ul>
+            <p style="margin-top: 15px;">This tool analyzes irregular building frames under lateral loads using the Portal Method.</p>
         </div>
     </div>
 </div>
 
 <script>
-// Portal Method Analysis Engine
-function computeIrregularPortalMethod(numStoreys, numSpans, loads, heights, spanLengths, activeSpans) {
-    const results = {
-        numStoreys: numStoreys,
-        numSpans: numSpans,
-        loads: loads,
-        heights: heights,
-        spanLengths: spanLengths,
-        activeSpans: activeSpans,
-        storeyShears: {},
-        columnShears: {},
-        columnMoments: {},
-        beamShears: {},
-        beamAxialForces: {},
-        axialForces: {},
-        exteriorCols: {},
-        interiorCols: {},
-        V_unit: {}
-    };
-    
-    // Step 1: Storey Shear Forces
-    let storeyShear = 0;
-    for (let i = numStoreys; i >= 1; i--) {
-        storeyShear += loads[i];
-        results.storeyShears[i] = storeyShear;
-    }
-    
-    // Step 2: Column Shear Forces (V & 2V Distribution)
-    for (let i = 1; i <= numStoreys; i++) {
-        const activeColumns = [];
-        for (let col = 0; col <= numSpans; col++) {
-            const leftActive = (col > 0 && activeSpans[i] && activeSpans[i][col] === 1);
-            const rightActive = (col < numSpans && activeSpans[i] && activeSpans[i][col + 1] === 1);
-            if (leftActive || rightActive) {
-                activeColumns.push(col);
-            }
-        }
-        
-        const exteriorCols = [];
-        const interiorCols = [];
-        activeColumns.forEach((col, idx) => {
-            if (idx === 0 || idx === activeColumns.length - 1) {
-                exteriorCols.push(col);
-            } else {
-                interiorCols.push(col);
-            }
-        });
-        
-        if (activeColumns.includes(0) && !exteriorCols.includes(0)) exteriorCols.push(0);
-        if (activeColumns.includes(numSpans) && !exteriorCols.includes(numSpans)) exteriorCols.push(numSpans);
-        
-        results.exteriorCols[i] = exteriorCols;
-        results.interiorCols[i] = interiorCols.filter(c => !exteriorCols.includes(c));
-        
-        const totalUnits = exteriorCols.length * 1 + results.interiorCols[i].length * 2;
-        const V = totalUnits > 0 ? results.storeyShears[i] / totalUnits : 0;
-        results.V_unit[i] = V;
-        
-        results.columnShears[i] = {};
-        exteriorCols.forEach(col => results.columnShears[i][col] = V);
-        results.interiorCols[i].forEach(col => results.columnShears[i][col] = 2 * V);
-    }
-    
-    // Step 3: Column Moments
-    for (let i = 1; i <= numStoreys; i++) {
-        results.columnMoments[i] = {};
-        for (let col = 0; col <= numSpans; col++) {
-            if (results.columnShears[i] && results.columnShears[i][col] !== undefined) {
-                results.columnMoments[i][col] = results.columnShears[i][col] * (heights[i] / 2);
-            }
-        }
-    }
-    
-    // Step 4: Beam Vertical Shears
-    for (let i = numStoreys; i >= 1; i--) {
-        results.beamShears[i] = {};
-        for (let span = 1; span <= numSpans; span++) {
-            if (activeSpans[i] && activeSpans[i][span] === 1) {
-                const L = spanLengths[span];
-                const leftCol = span - 1;
-                let sumColMoment = 0;
-                if (results.columnMoments[i] && results.columnMoments[i][leftCol]) sumColMoment += results.columnMoments[i][leftCol];
-                if (i < numStoreys && results.columnMoments[i + 1] && results.columnMoments[i + 1][leftCol]) sumColMoment += results.columnMoments[i + 1][leftCol];
-                
-                let prevBeamMoment = 0;
-                if (span > 1 && results.beamShears[i] && results.beamShears[i][span - 1]) {
-                    const L_prev = spanLengths[span - 1];
-                    prevBeamMoment = results.beamShears[i][span - 1] * (L_prev / 2);
-                }
-                
-                const V_beam = (sumColMoment - prevBeamMoment) / (L / 2);
-                results.beamShears[i][span] = V_beam;
-            }
-        }
-    }
-    
-    // Step 5: Beam Axial Forces
-    for (let i = numStoreys; i >= 1; i--) {
-        results.beamAxialForces[i] = {};
-        for (let col = 0; col < numSpans; col++) {
-            const P_ext = (col === 0) ? loads[i] : 0;
-            let H_left = 0;
-            if (col > 0 && results.beamAxialForces[i] && results.beamAxialForces[i][col]) H_left = results.beamAxialForces[i][col];
-            
-            let V_top = 0;
-            if (i < numStoreys && results.columnShears[i + 1] && results.columnShears[i + 1][col]) V_top = results.columnShears[i + 1][col];
-            
-            let V_bot = 0;
-            if (results.columnShears[i] && results.columnShears[i][col]) V_bot = results.columnShears[i][col];
-            
-            const rightSpan = col + 1;
-            if (activeSpans[i] && activeSpans[i][rightSpan] === 1) {
-                const H_right = P_ext + H_left + V_top - V_bot;
-                results.beamAxialForces[i][rightSpan] = H_right;
-            }
-        }
-    }
-    
-    // Column Axial Forces
-    for (let i = 1; i <= numStoreys; i++) {
-        results.axialForces[i] = {};
-        for (let col = 0; col <= numSpans; col++) {
-            let axial = 0;
-            for (let k = i + 1; k <= numStoreys; k++) {
-                if (results.beamAxialForces[k] && results.beamAxialForces[k][col]) axial += results.beamAxialForces[k][col];
-                if (results.beamAxialForces[k] && results.beamAxialForces[k][col + 1]) axial -= results.beamAxialForces[k][col + 1];
-            }
-            results.axialForces[i][col] = axial;
-        }
-    }
-    
-    return results;
-}
-
-// UI State
 let currentResults = null;
 let vizSettings = {
     colShears: true,
@@ -761,173 +455,282 @@ let vizSettings = {
     loads: false
 };
 
-function updateFormFields() {
-    const numStoreys = parseInt(document.getElementById('numStoreys').value) || 0;
-    const numSpans = parseInt(document.getElementById('numSpans').value) || 0;
-    const container = document.getElementById('dynamicInputs');
+function updateForm() {
+    const numStoreys = parseInt(document.getElementById('numStoreys').value);
+    const numSpans = parseInt(document.getElementById('numSpans').value);
+    const container = document.getElementById('inputFields');
     
-    if (numStoreys < 1 || numSpans < 1) {
-        container.innerHTML = '<div class="card" style="text-align: center;"><i class="fas fa-arrow-up" style="font-size: 3rem; color: var(--primary);"></i><h3>Enter Structure Configuration</h3><p>Please enter number of storeys (1-5) and spans (1-6)</p></div>';
+    if (numStoreys < 1 || numStoreys > 5 || numSpans < 1 || numSpans > 6) {
+        container.innerHTML = '<div class="card"><p style="color: red;">Please enter valid values: Storeys 1-5, Spans 1-6</p></div>';
         return;
     }
     
-    let html = '<div class="card"><div class="card-header"><i class="fas fa-weight-hanging"></i><h3>Storey Loads and Heights</h3></div><div class="grid-storey" id="storeyInputs"></div></div>';
-    html += '<div class="card"><div class="card-header"><i class="fas fa-ruler"></i><h3>Span Lengths</h3></div><div class="grid-storey" id="spanInputs"></div></div>';
-    html += '<div class="card"><div class="card-header"><i class="fas fa-check-circle"></i><h3>Active Spans Configuration</h3><p style="margin-bottom:10px;">Check = Span exists, Uncheck = Missing member</p><div id="activeSpansTable"></div></div></div>';
-    container.innerHTML = html;
-    
-    let storeyHTML = '';
+    let html = '<div class="card"><h3>Storey Loads and Heights</h3><div class="grid-storey">';
     for (let i = 1; i <= numStoreys; i++) {
-        storeyHTML += '<div class="input-group"><label>Storey ' + i + ' Load (kN)</label><input type="number" step="0.01" name="load_' + i + '" placeholder="e.g. 50" required></div>';
-        storeyHTML += '<div class="input-group"><label>Storey ' + i + ' Height (m)</label><input type="number" step="0.01" name="height_' + i + '" placeholder="e.g. 3.5" required></div>';
+        html += '<div class="input-group"><label>Storey ' + i + ' Load (kN)</label><input type="number" step="0.01" id="load_' + i + '" placeholder="e.g., 50"></div>';
+        html += '<div class="input-group"><label>Storey ' + i + ' Height (m)</label><input type="number" step="0.01" id="height_' + i + '" placeholder="e.g., 3.5"></div>';
     }
-    document.getElementById('storeyInputs').innerHTML = storeyHTML;
+    html += '</div></div>';
     
-    let spanHTML = '';
+    html += '<div class="card"><h3>Span Lengths</h3><div class="grid-storey">';
     for (let j = 1; j <= numSpans; j++) {
-        spanHTML += '<div class="input-group"><label>Span ' + j + ' Length (m)</label><input type="number" step="0.01" name="span_length_' + j + '" placeholder="e.g. 5.0" required></div>';
+        html += '<div class="input-group"><label>Span ' + j + ' Length (m)</label><input type="number" step="0.01" id="span_' + j + '" placeholder="e.g., 5.0"></div>';
     }
-    document.getElementById('spanInputs').innerHTML = spanHTML;
+    html += '</div></div>';
     
-    let tableHTML = '<div class="table-responsive"><table><thead><tr><th>Storey</th>';
-    for (let j = 1; j <= numSpans; j++) tableHTML += '<th>Span ' + j + '</th>';
-    tableHTML += '</tr></thead><tbody>';
+    html += '<div class="card"><h3>Active Spans (Check = Span Exists)</h3><div class="table-responsive">';
+    html += '<table><thead><tr><th>Storey</th>';
+    for (let j = 1; j <= numSpans; j++) html += '<th>Span ' + j + '</th>';
+    html += '</tr></thead><tbody>';
     for (let i = numStoreys; i >= 1; i--) {
-        tableHTML += '<tr><td><strong>Storey ' + i + '</strong></td>';
+        html += '<tr><td><strong>Storey ' + i + '</strong></td>';
         for (let j = 1; j <= numSpans; j++) {
-            tableHTML += '<td style="text-align:center;"><label class="checkbox-label"><input type="checkbox" name="active_' + i + '_' + j + '" checked></label></td>';
+            html += '<td><label class="checkbox-label"><input type="checkbox" id="active_' + i + '_' + j + '" checked></label></td>';
         }
-        tableHTML += '</tr>';
+        html += '</tr>';
     }
-    tableHTML += '</tbody></table></div>';
-    document.getElementById('activeSpansTable').innerHTML = tableHTML;
+    html += '</tbody></table></div></div>';
+    
+    container.innerHTML = html;
 }
 
-function clearAllInputs() {
+function clearAll() {
     document.getElementById('numStoreys').value = '3';
     document.getElementById('numSpans').value = '3';
-    updateFormFields();
-    document.getElementById('resultsArea').style.display = 'none';
+    updateForm();
+    document.getElementById('results').style.display = 'none';
     currentResults = null;
 }
 
-function resetForm() {
-    clearAllInputs();
-}
-
-function showError(message) {
-    const errorDiv = document.getElementById('errorMessage');
-    errorDiv.innerHTML = '<i class="fas fa-exclamation-circle"></i><div><strong>Error:</strong> ' + message + '</div>';
-    errorDiv.style.display = 'flex';
-    setTimeout(function() { errorDiv.style.display = 'none'; }, 5000);
-}
-
-function computeAnalysis() {
+function compute() {
     const numStoreys = parseInt(document.getElementById('numStoreys').value);
     const numSpans = parseInt(document.getElementById('numSpans').value);
     
-    if (numStoreys < 1 || numStoreys > 5) { showError("Number of storeys must be between 1 and 5"); return; }
-    if (numSpans < 1 || numSpans > 6) { showError("Number of spans must be between 1 and 6"); return; }
-    
-    const loads = {}, heights = {};
+    const loads = {};
+    const heights = {};
     for (let i = 1; i <= numStoreys; i++) {
-        const loadVal = parseFloat(document.querySelector('input[name="load_' + i + '"]').value);
-        const heightVal = parseFloat(document.querySelector('input[name="height_' + i + '"]').value);
-        if (isNaN(loadVal) || isNaN(heightVal)) { showError("Please enter Load and Height for Storey " + i); return; }
+        const loadVal = parseFloat(document.getElementById('load_' + i).value);
+        const heightVal = parseFloat(document.getElementById('height_' + i).value);
+        if (isNaN(loadVal) || isNaN(heightVal)) {
+            Swal.fire('Error', 'Please enter all loads and heights', 'error');
+            return;
+        }
         loads[i] = loadVal;
         heights[i] = heightVal;
     }
     
-    const spanLengths = {};
+    const spans = {};
     for (let j = 1; j <= numSpans; j++) {
-        const spanVal = parseFloat(document.querySelector('input[name="span_length_' + j + '"]').value);
-        if (isNaN(spanVal)) { showError("Please enter Length for Span " + j); return; }
-        spanLengths[j] = spanVal;
+        const spanVal = parseFloat(document.getElementById('span_' + j).value);
+        if (isNaN(spanVal)) {
+            Swal.fire('Error', 'Please enter all span lengths', 'error');
+            return;
+        }
+        spans[j] = spanVal;
     }
     
     const activeSpans = {};
     for (let i = 1; i <= numStoreys; i++) {
         activeSpans[i] = {};
         for (let j = 1; j <= numSpans; j++) {
-            const cb = document.querySelector('input[name="active_' + i + '_' + j + '"]');
-            activeSpans[i][j] = (cb && cb.checked) ? 1 : 0;
+            const cb = document.getElementById('active_' + i + '_' + j);
+            activeSpans[i][j] = cb && cb.checked ? 1 : 0;
         }
     }
     
-    const results = computeIrregularPortalMethod(numStoreys, numSpans, loads, heights, spanLengths, activeSpans);
+    const results = analyze(numStoreys, numSpans, loads, heights, spans, activeSpans);
     currentResults = results;
     displayResults(results);
     drawStructure(results);
     
-    Swal.fire({
-        icon: 'success',
-        title: 'Analysis Complete',
-        text: 'Irregular frame analysis has been computed successfully!',
-        timer: 2000,
-        showConfirmButton: false
-    });
+    Swal.fire('Success', 'Analysis completed successfully!', 'success');
+}
+
+function analyze(nStoreys, nSpans, loads, heights, spans, activeSpans) {
+    const res = {
+        numStoreys: nStoreys,
+        numSpans: nSpans,
+        loads: loads,
+        heights: heights,
+        spans: spans,
+        activeSpans: activeSpans,
+        storeyShears: {},
+        colShears: {},
+        colMoments: {},
+        beamShears: {},
+        beamAxials: {},
+        colAxials: {},
+        exteriorCols: {},
+        interiorCols: {},
+        Vunit: {}
+    };
+    
+    // Storey shears
+    let shear = 0;
+    for (let i = nStoreys; i >= 1; i--) {
+        shear += loads[i];
+        res.storeyShears[i] = shear;
+    }
+    
+    // Column shears
+    for (let i = 1; i <= nStoreys; i++) {
+        const activeCols = [];
+        for (let c = 0; c <= nSpans; c++) {
+            const left = c > 0 && activeSpans[i] && activeSpans[i][c] === 1;
+            const right = c < nSpans && activeSpans[i] && activeSpans[i][c + 1] === 1;
+            if (left || right) activeCols.push(c);
+        }
+        
+        const exterior = [], interior = [];
+        activeCols.forEach((col, idx) => {
+            if (idx === 0 || idx === activeCols.length - 1) exterior.push(col);
+            else interior.push(col);
+        });
+        
+        res.exteriorCols[i] = exterior;
+        res.interiorCols[i] = interior;
+        
+        const totalUnits = exterior.length * 1 + interior.length * 2;
+        const V = totalUnits > 0 ? res.storeyShears[i] / totalUnits : 0;
+        res.Vunit[i] = V;
+        
+        res.colShears[i] = {};
+        exterior.forEach(c => res.colShears[i][c] = V);
+        interior.forEach(c => res.colShears[i][c] = 2 * V);
+    }
+    
+    // Column moments
+    for (let i = 1; i <= nStoreys; i++) {
+        res.colMoments[i] = {};
+        for (let c = 0; c <= nSpans; c++) {
+            if (res.colShears[i] && res.colShears[i][c]) {
+                res.colMoments[i][c] = res.colShears[i][c] * (heights[i] / 2);
+            }
+        }
+    }
+    
+    // Beam shears
+    for (let i = nStoreys; i >= 1; i--) {
+        res.beamShears[i] = {};
+        for (let s = 1; s <= nSpans; s++) {
+            if (activeSpans[i] && activeSpans[i][s] === 1) {
+                const L = spans[s];
+                const leftCol = s - 1;
+                let sumMom = 0;
+                if (res.colMoments[i] && res.colMoments[i][leftCol]) sumMom += res.colMoments[i][leftCol];
+                if (i < nStoreys && res.colMoments[i + 1] && res.colMoments[i + 1][leftCol]) sumMom += res.colMoments[i + 1][leftCol];
+                
+                let prevMoment = 0;
+                if (s > 1 && res.beamShears[i] && res.beamShears[i][s - 1]) {
+                    prevMoment = res.beamShears[i][s - 1] * (spans[s - 1] / 2);
+                }
+                
+                res.beamShears[i][s] = (sumMom - prevMoment) / (L / 2);
+            }
+        }
+    }
+    
+    // Beam axial forces
+    for (let i = nStoreys; i >= 1; i--) {
+        res.beamAxials[i] = {};
+        for (let c = 0; c < nSpans; c++) {
+            const Pext = c === 0 ? loads[i] : 0;
+            let Hleft = 0;
+            if (c > 0 && res.beamAxials[i] && res.beamAxials[i][c]) Hleft = res.beamAxials[i][c];
+            
+            let Vtop = 0;
+            if (i < nStoreys && res.colShears[i + 1] && res.colShears[i + 1][c]) Vtop = res.colShears[i + 1][c];
+            
+            let Vbot = 0;
+            if (res.colShears[i] && res.colShears[i][c]) Vbot = res.colShears[i][c];
+            
+            const rightSpan = c + 1;
+            if (activeSpans[i] && activeSpans[i][rightSpan] === 1) {
+                res.beamAxials[i][rightSpan] = Pext + Hleft + Vtop - Vbot;
+            }
+        }
+    }
+    
+    // Column axials
+    for (let i = 1; i <= nStoreys; i++) {
+        res.colAxials[i] = {};
+        for (let c = 0; c <= nSpans; c++) {
+            let axial = 0;
+            for (let k = i + 1; k <= nStoreys; k++) {
+                if (res.beamAxials[k] && res.beamAxials[k][c]) axial += res.beamAxials[k][c];
+                if (res.beamAxials[k] && res.beamAxials[k][c + 1]) axial -= res.beamAxials[k][c + 1];
+            }
+            res.colAxials[i][c] = axial;
+        }
+    }
+    
+    return res;
 }
 
 function displayResults(res) {
-    const container = document.getElementById('resultsArea');
+    const container = document.getElementById('results');
     container.style.display = 'block';
     
-    let html = '<div class="card"><div class="card-header"><i class="fas fa-list-ol"></i><h2>Step-by-Step Solution</h2></div><div class="viz-controls">';
+    let html = '<div class="card"><div class="card-header"><i class="fas fa-list"></i><h2>Step-by-Step Results</h2></div>';
+    html += '<div class="viz-controls">';
     html += '<button class="viz-btn active" onclick="showStep(\'step1\')">1. Storey Shears</button>';
     html += '<button class="viz-btn" onclick="showStep(\'step2\')">2. Column Shears</button>';
-    html += '<button class="viz-btn" onclick="showStep(\'step3\')">3. Moments</button>';
+    html += '<button class="viz-btn" onclick="showStep(\'step3\')">3. Column Moments</button>';
     html += '<button class="viz-btn" onclick="showStep(\'step4\')">4. Beam Shears</button>';
     html += '<button class="viz-btn" onclick="showStep(\'step5\')">5. Axial Forces</button>';
     html += '</div>';
-    html += '<div id="step1" class="step-container active"><div class="step-title">Step 1: Storey Shear Forces</div><div class="step-formula">$$V_i = \\sum_{j=i}^{n} P_j$$</div><ul class="step-details" id="step1List"></ul></div>';
-    html += '<div id="step2" class="step-container"><div class="step-title">Step 2: Column Shear Distribution</div><div class="step-formula">$$V_{unit} = \\frac{V_{storey}}{\\sum units}$$</div><ul class="step-details" id="step2List"></ul></div>';
-    html += '<div id="step3" class="step-container"><div class="step-title">Step 3: Column Moments</div><div class="step-formula">$$M_{col} = V_{col} \\times \\frac{h}{2}$$</div><ul class="step-details" id="step3List"></ul></div>';
-    html += '<div id="step4" class="step-container"><div class="step-title">Step 4: Beam Vertical Shears</div><ul class="step-details" id="step4List"></ul></div>';
-    html += '<div id="step5" class="step-container"><div class="step-title">Step 5: Beam Axial Forces</div><ul class="step-details" id="step5List"></ul></div></div>';
-    html += '<div class="card"><div class="card-header"><i class="fas fa-project-diagram"></i><h2>Structural Visualization</h2></div>';
-    html += '<div class="viz-controls"><button class="viz-btn active" data-layer="colShears"><i class="fas fa-columns"></i> Column Shear</button>';
-    html += '<button class="viz-btn active" data-layer="beamShears"><i class="fas fa-grip-lines"></i> Beam Shear</button>';
-    html += '<button class="viz-btn active" data-layer="colAxials"><i class="fas fa-arrow-down"></i> Column Axial</button>';
-    html += '<button class="viz-btn active" data-layer="beamAxials"><i class="fas fa-arrows-alt-h"></i> Beam Axial</button>';
-    html += '<button class="viz-btn active" data-layer="moments"><i class="fas fa-redo-alt"></i> Moments</button>';
-    html += '<button class="viz-btn" data-layer="loads"><i class="fas fa-weight-hanging"></i> Loads</button>';
-    html += '<button class="btn btn-secondary" onclick="downloadCanvas()"><i class="fas fa-download"></i> Download</button></div>';
-    html += '<div class="viz-container"><canvas id="structureCanvas" width="1200" height="700"></canvas></div>';
-    html += '<div class="viz-legend"><div class="legend-item"><span class="legend-color" style="background:#6f42c1;"></span> Column Shear (V)</div>';
-    html += '<div class="legend-item"><span class="legend-color" style="background:#007bff;"></span> Beam Shear (V)</div>';
-    html += '<div class="legend-item"><span class="legend-color" style="background:#fd7e14;"></span> Column Axial (f)</div>';
-    html += '<div class="legend-item"><span class="legend-color" style="background:#28a745;"></span> Beam Axial (f)</div>';
-    html += '<div class="legend-item"><span class="legend-color" style="background:#fd7e14;"></span> Moments (M)</div>';
-    html += '<div class="legend-item"><span class="legend-color" style="background:#dc3545;"></span> Loads (P)</div></div></div>';
-    html += '<div class="card"><div class="card-header"><i class="fas fa-chart-bar"></i><h2>Detailed Results</h2></div><div id="detailedTables"></div>';
-    html += '<div class="btn-group"><button onclick="window.print()" class="btn btn-primary"><i class="fas fa-print"></i> Print Results</button></div></div>';
+    
+    html += '<div id="step1" class="step-container active"><div class="step-title">Storey Shear Forces</div><div class="step-formula">Vᵢ = Σ Pⱼ</div><ul class="step-details" id="step1List"></ul></div>';
+    html += '<div id="step2" class="step-container"><div class="step-title">Column Shear Distribution</div><div class="step-formula">V_unit = V_storey / Σ units</div><ul class="step-details" id="step2List"></ul></div>';
+    html += '<div id="step3" class="step-container"><div class="step-title">Column Moments</div><div class="step-formula">M = V × h/2</div><ul class="step-details" id="step3List"></ul></div>';
+    html += '<div id="step4" class="step-container"><div class="step-title">Beam Shears</div><ul class="step-details" id="step4List"></ul></div>';
+    html += '<div id="step5" class="step-container"><div class="step-title">Beam Axial Forces</div><ul class="step-details" id="step5List"></ul></div>';
+    html += '</div>';
+    
+    html += '<div class="card"><div class="card-header"><i class="fas fa-chart-line"></i><h2>Structure Visualization</h2></div>';
+    html += '<div class="viz-controls">';
+    html += '<button class="viz-btn active" data-layer="colShears">Column Shear</button>';
+    html += '<button class="viz-btn active" data-layer="beamShears">Beam Shear</button>';
+    html += '<button class="viz-btn active" data-layer="colAxials">Column Axial</button>';
+    html += '<button class="viz-btn active" data-layer="beamAxials">Beam Axial</button>';
+    html += '<button class="viz-btn active" data-layer="moments">Moments</button>';
+    html += '<button class="viz-btn" data-layer="loads">Loads</button>';
+    html += '<button class="btn btn-secondary" onclick="downloadDiagram()"><i class="fas fa-download"></i> Download</button>';
+    html += '</div>';
+    html += '<div class="viz-container"><canvas id="structureCanvas" width="1000" height="600"></canvas></div>';
+    html += '<div class="viz-legend">';
+    html += '<div class="legend-item"><div class="legend-color" style="background:#9b59b6;"></div> Column Shear</div>';
+    html += '<div class="legend-item"><div class="legend-color" style="background:#3498db;"></div> Beam Shear</div>';
+    html += '<div class="legend-item"><div class="legend-color" style="background:#e67e22;"></div> Column Axial</div>';
+    html += '<div class="legend-item"><div class="legend-color" style="background:#2ecc71;"></div> Beam Axial</div>';
+    html += '<div class="legend-item"><div class="legend-color" style="background:#e74c3c;"></div> Moments</div>';
+    html += '</div></div>';
+    
+    html += '<div class="card"><div class="card-header"><i class="fas fa-table"></i><h2>Detailed Results Table</h2></div>';
+    html += '<div id="detailedTables"></div>';
+    html += '<button class="btn btn-primary" onclick="window.print()"><i class="fas fa-print"></i> Print Report</button>';
+    html += '</div>';
+    
     container.innerHTML = html;
     
     // Populate steps
     let step1Html = '';
     for (let i = res.numStoreys; i >= 1; i--) {
-        let calc = '';
-        for (let j = i; j <= res.numStoreys; j++) {
-            calc += res.loads[j].toFixed(1);
-            if (j < res.numStoreys) calc += ' + ';
-        }
-        step1Html += '<li>Storey ' + i + ': V = ' + calc + ' = ' + res.storeyShears[i].toFixed(2) + ' kN</li>';
+        step1Html += `<li>Storey ${i}: V = ${res.storeyShears[i].toFixed(2)} kN</li>`;
     }
     document.getElementById('step1List').innerHTML = step1Html;
     
     let step2Html = '';
     for (let i = 1; i <= res.numStoreys; i++) {
-        let ext = (res.exteriorCols[i] || []).join(', ') || 'none';
-        let int = (res.interiorCols[i] || []).join(', ') || 'none';
-        step2Html += '<li><strong>Storey ' + i + '</strong>: V_storey = ' + res.storeyShears[i].toFixed(2) + ' kN, V_unit = ' + res.V_unit[i].toFixed(3) + ' kN<br>Exterior columns: ' + ext + ' → V = ' + res.V_unit[i].toFixed(2) + ' kN, Interior: ' + int + ' → V = ' + (2*res.V_unit[i]).toFixed(2) + ' kN</li>';
+        step2Html += `<li>Storey ${i}: V_unit = ${res.Vunit[i].toFixed(3)} kN<br>Exterior columns: ${res.exteriorCols[i]?.join(', ') || 'none'} (V = ${res.Vunit[i].toFixed(2)} kN)<br>Interior columns: ${res.interiorCols[i]?.join(', ') || 'none'} (V = ${(2*res.Vunit[i]).toFixed(2)} kN)</li>`;
     }
     document.getElementById('step2List').innerHTML = step2Html;
     
     let step3Html = '';
     for (let i = 1; i <= res.numStoreys; i++) {
         for (let c = 0; c <= res.numSpans; c++) {
-            if (res.columnMoments[i] && res.columnMoments[i][c]) {
-                step3Html += '<li>Storey ' + i + ', Column ' + c + ': M = ' + res.columnShears[i][c].toFixed(2) + ' × ' + (res.heights[i]/2).toFixed(2) + ' = ' + res.columnMoments[i][c].toFixed(2) + ' kN·m</li>';
+            if (res.colMoments[i] && res.colMoments[i][c]) {
+                step3Html += `<li>Storey ${i}, Column ${c}: M = ${res.colMoments[i][c].toFixed(2)} kN·m</li>`;
             }
         }
     }
@@ -937,7 +740,7 @@ function displayResults(res) {
     for (let i = res.numStoreys; i >= 1; i--) {
         for (let s = 1; s <= res.numSpans; s++) {
             if (res.beamShears[i] && res.beamShears[i][s]) {
-                step4Html += '<li>Storey ' + i + ', Span ' + s + ': V = ' + res.beamShears[i][s].toFixed(2) + ' kN</li>';
+                step4Html += `<li>Storey ${i}, Span ${s}: V = ${res.beamShears[i][s].toFixed(2)} kN</li>`;
             }
         }
     }
@@ -946,48 +749,40 @@ function displayResults(res) {
     let step5Html = '';
     for (let i = res.numStoreys; i >= 1; i--) {
         for (let s = 1; s <= res.numSpans; s++) {
-            if (res.beamAxialForces[i] && res.beamAxialForces[i][s]) {
-                step5Html += '<li>Storey ' + i + ', Span ' + s + ': f = ' + res.beamAxialForces[i][s].toFixed(2) + ' kN</li>';
+            if (res.beamAxials[i] && res.beamAxials[i][s]) {
+                step5Html += `<li>Storey ${i}, Span ${s}: f = ${res.beamAxials[i][s].toFixed(2)} kN</li>`;
             }
         }
     }
     document.getElementById('step5List').innerHTML = step5Html;
     
     // Detailed tables
-    let tables = '<div class="result-card"><h4>Column Shears (kN)</h4><div class="table-responsive">' + generateColumnTable(res, 'columnShears') + '</div></div>';
-    tables += '<div class="result-card"><h4>Beam Shears (kN)</h4><div class="table-responsive">' + generateBeamTable(res, 'beamShears') + '</div></div>';
-    tables += '<div class="result-card"><h4>Beam Axial Forces (kN)</h4><div class="table-responsive">' + generateBeamTable(res, 'beamAxialForces') + '</div></div>';
-    tables += '<div class="result-card"><h4>Column Axial Forces (kN) [C=Compression, T=Tension]</h4><div class="table-responsive">' + generateColumnAxialTable(res) + '</div></div>';
+    let tables = '<div class="result-card"><h4>Column Shears (kN)</h4><div class="table-responsive">' + makeColTable(res, 'colShears') + '</div></div>';
+    tables += '<div class="result-card"><h4>Beam Shears (kN)</h4><div class="table-responsive">' + makeBeamTable(res, 'beamShears') + '</div></div>';
+    tables += '<div class="result-card"><h4>Beam Axials (kN)</h4><div class="table-responsive">' + makeBeamTable(res, 'beamAxials') + '</div></div>';
+    tables += '<div class="result-card"><h4>Column Axials (kN) [C=Compression, T=Tension]</h4><div class="table-responsive">' + makeAxialTable(res) + '</div></div>';
     document.getElementById('detailedTables').innerHTML = tables;
     
-    // Attach layer toggles
-    document.querySelectorAll('[data-layer]').forEach(function(btn) {
-        btn.addEventListener('click', function() {
-            const layer = this.getAttribute('data-layer');
+    // Layer toggles
+    document.querySelectorAll('[data-layer]').forEach(btn => {
+        btn.onclick = () => {
+            const layer = btn.dataset.layer;
             vizSettings[layer] = !vizSettings[layer];
-            if (vizSettings[layer]) {
-                this.classList.add('active');
-            } else {
-                this.classList.remove('active');
-            }
+            btn.classList.toggle('active', vizSettings[layer]);
             if (currentResults) drawStructure(currentResults);
-        });
+        };
     });
-    
-    if (window.MathJax) {
-        MathJax.typesetPromise();
-    }
 }
 
-function generateColumnTable(res, type) {
+function makeColTable(res, type) {
     let html = '<table><thead><tr><th>Storey</th>';
-    for (let c = 0; c <= res.numSpans; c++) html += '<th>Col ' + c + '</th>';
+    for (let c = 0; c <= res.numSpans; c++) html += `<th>Col ${c}</th>`;
     html += '</tr></thead><tbody>';
     for (let i = res.numStoreys; i >= 1; i--) {
-        html += '<tr><td>' + i + '</td>';
+        html += `<tr><td>${i}</td>`;
         for (let c = 0; c <= res.numSpans; c++) {
-            let val = (res[type][i] && res[type][i][c]) ? res[type][i][c].toFixed(2) : '—';
-            html += '<td>' + val + '</td>';
+            let val = res[type][i] && res[type][i][c] ? res[type][i][c].toFixed(2) : '—';
+            html += `<td>${val}</td>`;
         }
         html += '</tr>';
     }
@@ -995,15 +790,15 @@ function generateColumnTable(res, type) {
     return html;
 }
 
-function generateBeamTable(res, type) {
+function makeBeamTable(res, type) {
     let html = '<table><thead><tr><th>Storey</th>';
-    for (let s = 1; s <= res.numSpans; s++) html += '<th>Span ' + s + '</th>';
+    for (let s = 1; s <= res.numSpans; s++) html += `<th>Span ${s}</th>`;
     html += '</tr></thead><tbody>';
     for (let i = res.numStoreys; i >= 1; i--) {
-        html += '<tr><td>' + i + '</td>';
+        html += `<tr><td>${i}</td>`;
         for (let s = 1; s <= res.numSpans; s++) {
-            let val = (res[type][i] && res[type][i][s]) ? res[type][i][s].toFixed(2) : (res.activeSpans[i][s] ? '0' : '—');
-            html += '<td>' + val + '</td>';
+            let val = res[type][i] && res[type][i][s] ? res[type][i][s].toFixed(2) : (res.activeSpans[i][s] ? '0' : '—');
+            html += `<td>${val}</td>`;
         }
         html += '</tr>';
     }
@@ -1011,19 +806,19 @@ function generateBeamTable(res, type) {
     return html;
 }
 
-function generateColumnAxialTable(res) {
+function makeAxialTable(res) {
     let html = '<table><thead><tr><th>Storey</th>';
-    for (let c = 0; c <= res.numSpans; c++) html += '<th>Col ' + c + '</th>';
+    for (let c = 0; c <= res.numSpans; c++) html += `<th>Col ${c}</th>`;
     html += '</tr></thead><tbody>';
     for (let i = res.numStoreys; i >= 1; i--) {
-        html += '<tr><td>' + i + '</td>';
+        html += `<tr><td>${i}</td>`;
         for (let c = 0; c <= res.numSpans; c++) {
-            if (res.axialForces[i] && res.axialForces[i][c] !== undefined) {
-                let val = Math.abs(res.axialForces[i][c]).toFixed(2);
-                let type = res.axialForces[i][c] > 0 ? 'T' : 'C';
-                html += '<td>' + val + ' ' + type + '</td>';
+            if (res.colAxials[i] && res.colAxials[i][c] !== undefined) {
+                let val = Math.abs(res.colAxials[i][c]).toFixed(2);
+                let type = res.colAxials[i][c] > 0 ? 'T' : 'C';
+                html += `<td>${val} ${type}</td>`;
             } else {
-                html += '<td>—</td>';
+                html += `<td>—</td>`;
             }
         }
         html += '</tr>';
@@ -1036,41 +831,32 @@ function drawStructure(res) {
     const canvas = document.getElementById('structureCanvas');
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
-    const pad = 120, storeyH = 130, spanW = 170;
-    const width = Math.max(1000, (res.numSpans * spanW) + 300);
-    const height = Math.max(650, (res.numStoreys * storeyH) + 180);
-    canvas.width = width;
-    canvas.height = height;
-    ctx.clearRect(0, 0, width, height);
+    const pad = 100, storeyH = 120, spanW = 150;
+    const w = Math.max(900, (res.numSpans * spanW) + 200);
+    const h = Math.max(550, (res.numStoreys * storeyH) + 150);
+    canvas.width = w;
+    canvas.height = h;
+    ctx.clearRect(0, 0, w, h);
     
-    const startX = (width - (res.numSpans * spanW)) / 2;
-    const getX = function(col) { return startX + col * spanW; };
-    const getY = function(st) { return height - pad - (st * storeyH); };
+    const startX = (w - (res.numSpans * spanW)) / 2;
+    const getX = c => startX + c * spanW;
+    const getY = s => h - pad - (s * storeyH);
     
     // Draw columns
     for (let i = 1; i <= res.numStoreys; i++) {
         for (let c = 0; c <= res.numSpans; c++) {
-            const leftActive = (c > 0 && res.activeSpans[i] && res.activeSpans[i][c] === 1);
-            const rightActive = (c < res.numSpans && res.activeSpans[i] && res.activeSpans[i][c + 1] === 1);
-            if (leftActive || rightActive) {
+            const left = c > 0 && res.activeSpans[i] && res.activeSpans[i][c] === 1;
+            const right = c < res.numSpans && res.activeSpans[i] && res.activeSpans[i][c + 1] === 1;
+            if (left || right) {
                 ctx.beginPath();
                 ctx.moveTo(getX(c), getY(i - 1));
                 ctx.lineTo(getX(c), getY(i));
                 ctx.strokeStyle = '#333';
-                ctx.lineWidth = 4;
-                ctx.stroke();
-                ctx.beginPath();
-                ctx.arc(getX(c), (getY(i - 1) + getY(i)) / 2, 6, 0, 2 * Math.PI);
-                ctx.fillStyle = 'white';
-                ctx.fill();
+                ctx.lineWidth = 3;
                 ctx.stroke();
                 if (i === 1) {
-                    ctx.beginPath();
-                    ctx.moveTo(getX(c) - 15, getY(0) + 15);
-                    ctx.lineTo(getX(c), getY(0));
-                    ctx.lineTo(getX(c) + 15, getY(0) + 15);
-                    ctx.fillStyle = '#6c757d';
-                    ctx.fill();
+                    ctx.fillStyle = '#95a5a6';
+                    ctx.fillRect(getX(c) - 12, getY(0) + 2, 24, 12);
                 }
             }
         }
@@ -1084,87 +870,78 @@ function drawStructure(res) {
                 ctx.moveTo(getX(s - 1), getY(i));
                 ctx.lineTo(getX(s), getY(i));
                 ctx.stroke();
-                ctx.beginPath();
-                ctx.arc((getX(s - 1) + getX(s)) / 2, getY(i), 6, 0, 2 * Math.PI);
-                ctx.fillStyle = 'white';
-                ctx.fill();
-                ctx.stroke();
             }
         }
     }
     
-    // Draw force labels
-    ctx.font = 'bold 13px sans-serif';
+    // Labels
+    ctx.font = 'bold 12px Arial';
     for (let i = 1; i <= res.numStoreys; i++) {
         for (let c = 0; c <= res.numSpans; c++) {
-            if (res.columnShears[i] && res.columnShears[i][c] && vizSettings.colShears) {
-                ctx.fillStyle = '#6f42c1';
-                ctx.fillText('V=' + res.columnShears[i][c].toFixed(1), getX(c) - 45, (getY(i - 1) + getY(i)) / 2);
+            if (res.colShears[i] && res.colShears[i][c] && vizSettings.colShears) {
+                ctx.fillStyle = '#9b59b6';
+                ctx.fillText(`V=${res.colShears[i][c].toFixed(1)}`, getX(c) - 40, (getY(i - 1) + getY(i)) / 2);
             }
-            if (res.axialForces[i] && res.axialForces[i][c] !== undefined && vizSettings.colAxials) {
-                let val = Math.abs(res.axialForces[i][c]).toFixed(1);
-                let type = res.axialForces[i][c] > 0 ? 'T' : 'C';
-                ctx.fillStyle = '#fd7e14';
-                ctx.fillText('f=' + val + type, getX(c) + 40, (getY(i - 1) + getY(i)) / 2);
+            if (res.colAxials[i] && res.colAxials[i][c] !== undefined && vizSettings.colAxials) {
+                ctx.fillStyle = '#e67e22';
+                let val = Math.abs(res.colAxials[i][c]).toFixed(1);
+                let type = res.colAxials[i][c] > 0 ? 'T' : 'C';
+                ctx.fillText(`f=${val}${type}`, getX(c) + 35, (getY(i - 1) + getY(i)) / 2);
             }
         }
         for (let s = 1; s <= res.numSpans; s++) {
             if (res.beamShears[i] && res.beamShears[i][s] && vizSettings.beamShears) {
-                ctx.fillStyle = '#007bff';
-                ctx.fillText('V=' + res.beamShears[i][s].toFixed(1), (getX(s - 1) + getX(s)) / 2, getY(i) - 20);
+                ctx.fillStyle = '#3498db';
+                ctx.fillText(`V=${res.beamShears[i][s].toFixed(1)}`, (getX(s - 1) + getX(s)) / 2, getY(i) - 18);
             }
-            if (res.beamAxialForces[i] && res.beamAxialForces[i][s] && vizSettings.beamAxials) {
-                ctx.fillStyle = '#28a745';
-                ctx.fillText('f=' + res.beamAxialForces[i][s].toFixed(1), (getX(s - 1) + getX(s)) / 2, getY(i) + 25);
+            if (res.beamAxials[i] && res.beamAxials[i][s] && vizSettings.beamAxials) {
+                ctx.fillStyle = '#2ecc71';
+                ctx.fillText(`f=${res.beamAxials[i][s].toFixed(1)}`, (getX(s - 1) + getX(s)) / 2, getY(i) + 22);
             }
         }
         if (vizSettings.moments) {
             for (let c = 0; c <= res.numSpans; c++) {
-                if (res.columnMoments[i] && res.columnMoments[i][c]) {
-                    ctx.fillStyle = '#fd7e14';
-                    ctx.fillText('M=' + res.columnMoments[i][c].toFixed(1), getX(c) + 55, getY(i) - 12);
+                if (res.colMoments[i] && res.colMoments[i][c]) {
+                    ctx.fillStyle = '#e74c3c';
+                    ctx.fillText(`M=${res.colMoments[i][c].toFixed(1)}`, getX(c) + 45, getY(i) - 10);
                 }
             }
         }
         if (vizSettings.loads) {
-            ctx.fillStyle = '#dc3545';
-            ctx.fillText('P=' + res.loads[i].toFixed(1) + ' kN', startX - 70, getY(i) - 15);
+            ctx.fillStyle = '#e74c3c';
+            ctx.fillText(`P=${res.loads[i].toFixed(1)}`, startX - 50, getY(i) - 15);
         }
     }
 }
 
 function showStep(stepId) {
-    var steps = document.querySelectorAll('.step-container');
-    for (var i = 0; i < steps.length; i++) {
-        steps[i].classList.remove('active');
-    }
+    document.querySelectorAll('.step-container').forEach(s => s.classList.remove('active'));
     document.getElementById(stepId).classList.add('active');
-    if (window.MathJax) {
-        MathJax.typesetPromise();
-    }
 }
 
-function downloadCanvas() {
+function downloadDiagram() {
     const canvas = document.getElementById('structureCanvas');
     if (canvas) {
         const link = document.createElement('a');
-        link.download = 'irregular_frame_diagram.png';
+        link.download = 'structure_diagram.png';
         link.href = canvas.toDataURL();
         link.click();
-        Swal.fire('Success', 'Diagram downloaded successfully!', 'success');
     }
 }
 
-function openAboutModal() { document.getElementById('aboutModal').style.display = 'block'; }
-function closeAboutModal() { document.getElementById('aboutModal').style.display = 'none'; }
+function openModal() {
+    document.getElementById('aboutModal').style.display = 'block';
+}
 
-window.onclick = function(e) { 
-    if (e.target === document.getElementById('aboutModal')) closeAboutModal(); 
+function closeModal() {
+    document.getElementById('aboutModal').style.display = 'none';
+}
+
+window.onclick = function(e) {
+    if (e.target === document.getElementById('aboutModal')) closeModal();
 };
 
-document.getElementById('numStoreys').addEventListener('input', updateFormFields);
-document.getElementById('numSpans').addEventListener('input', updateFormFields);
-updateFormFields();
+updateForm();
 </script>
 </body>
 </html>
